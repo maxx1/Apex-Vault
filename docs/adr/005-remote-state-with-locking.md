@@ -32,19 +32,19 @@ Engineer B runs terraform apply (at the same time)
 
 ```hcl
 backend "s3" {
-  bucket         = "pe-data-landing-zone-tfstate"
+  bucket         = "project-apex-tfstate"
   key            = "terraform.tfstate"
   region         = "us-east-2"
-  dynamodb_table = "pe-data-landing-zone-tflock"
+  dynamodb_table = "project-apex-tflock"
   encrypt        = true
 }
 ```
 
-| Setting | Value | Why |
+| Component | Resource | Purpose |
 |---|---|---|
-| **S3 bucket** | `pe-data-landing-zone-tfstate` | Centralized, versioned state storage |
-| **Encryption** | `true` | State may contain sensitive values |
-| **DynamoDB table** | `pe-data-landing-zone-tflock` | Prevents concurrent modifications |
+| **S3 bucket** | `project-apex-tfstate` | Centralized, versioned state storage |
+| **S3 encryption** | AES256 | Data protection at rest |
+| **DynamoDB table** | `project-apex-tflock` | Prevents concurrent modifications |
 | **S3 versioning** | Enabled | Can recover previous state if corrupted |
 
 ## Consequences

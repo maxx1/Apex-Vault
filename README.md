@@ -1,6 +1,6 @@
-# 🏗️ PE Data Landing Zone
+# 🏛️ Project Apex: Enterprise Cloud Data Foundation
 
-**A secure, automated AWS data landing zone for Private Equity portfolio companies — fully provisioned with Terraform and deployed via GitHub Actions CI/CD.**
+**A high-assurance, multi-tenant AWS data foundation for Private Equity portfolio acquisitions — provisioned with Terraform and deployed via GitHub Actions CI/CD.**
 
 ---
 
@@ -8,7 +8,7 @@
 
 > A Private Equity firm just acquired a mid-market manufacturing company. The company's financial data is scattered across legacy systems — some in on-premises ERPs, some in spreadsheets, some in Salesforce. The PE firm needs this data centralized in the cloud so their analysts can build dashboards, run forecasts, and track KPIs.
 >
-> **This project builds the secure cloud infrastructure that makes that possible.**
+> **Project Apex builds the institutional cloud foundation that makes that possible.**
 
 ---
 
@@ -22,7 +22,7 @@ flowchart TB
         XLS["📊 Excel Reports"]
     end
 
-    subgraph "AWS Cloud — PE Data Landing Zone"
+    subgraph "AWS Cloud — Project Apex Foundation"
         subgraph "VPC - 10.0.0.0/16"
             subgraph "Public Subnets - Multi-AZ"
                 PUB1["us-east-2a"]
@@ -180,24 +180,24 @@ Before initializing Terraform, create the S3 bucket and DynamoDB table for remot
 ```bash
 # Create state bucket
 aws s3api create-bucket \
-  --bucket pe-data-landing-zone-tfstate \
+  --bucket project-apex-tfstate \
   --region us-east-2 \
   --create-bucket-configuration LocationConstraint=us-east-2
 
 # Enable versioning on state bucket
 aws s3api put-bucket-versioning \
-  --bucket pe-data-landing-zone-tfstate \
+  --bucket project-apex-tfstate \
   --versioning-configuration Status=Enabled
 
 # Enable encryption on state bucket
 aws s3api put-bucket-encryption \
-  --bucket pe-data-landing-zone-tfstate \
+  --bucket project-apex-tfstate \
   --server-side-encryption-configuration \
   '{"Rules":[{"ApplyServerSideEncryptionByDefault":{"SSEAlgorithm":"AES256"}}]}'
 
 # Create DynamoDB lock table
 aws dynamodb create-table \
-  --table-name pe-data-landing-zone-tflock \
+  --table-name project-apex-tflock \
   --attribute-definitions AttributeName=LockID,AttributeType=S \
   --key-schema AttributeName=LockID,KeyType=HASH \
   --billing-mode PAY_PER_REQUEST \
@@ -231,7 +231,7 @@ aws s3 ls \
 
 # Check Lambda logs
 aws logs tail \
-  /aws/lambda/pe-data-landing-zone-dev-processor \
+  /aws/lambda/project-apex-dev-processor \
   --since 5m
 ```
 
@@ -240,7 +240,7 @@ aws logs tail \
 ## 📁 Repository Structure
 
 ```
-pe-data-landing-zone/
+project-apex/
 ├── README.md                          # This file — architecture overview
 ├── .github/workflows/
 │   ├── plan.yml                       # PR: terraform plan + tfsec + infracost

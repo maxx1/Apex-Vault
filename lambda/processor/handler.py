@@ -30,7 +30,7 @@ s3_client = boto3.client("s3")
 
 PROCESSED_BUCKET = os.environ.get("PROCESSED_BUCKET", "")
 ENVIRONMENT = os.environ.get("ENVIRONMENT", "dev")
-PROJECT_NAME = os.environ.get("PROJECT_NAME", "pe-data-landing-zone")
+PROJECT_NAME = os.environ.get("PROJECT_NAME", "project-apex")
 CLIENT_NAME = os.environ.get("CLIENT_NAME", "unknown")
 
 # Allowed file types for ingestion

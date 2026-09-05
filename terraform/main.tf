@@ -25,10 +25,10 @@ terraform {
 
   # Remote state — created during bootstrap (see README.md)
   backend "s3" {
-    bucket         = "pe-data-landing-zone-tfstate"
+    bucket         = "project-apex-tfstate"
     key            = "terraform.tfstate"
     region         = "us-east-2"
-    dynamodb_table = "pe-data-landing-zone-tflock"
+    dynamodb_table = "project-apex-tflock"
     encrypt        = true
   }
 }
