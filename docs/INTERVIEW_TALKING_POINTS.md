@@ -1,0 +1,119 @@
+# 🏛️ Project Apex: Technical Study Guide & Interview Talking Points
+
+This document is your **executive cheat sheet** for the Accordion interview. It connects every technical component you built in AWS to high-level Private Equity consulting business value and executive talking points.
+
+---
+
+## 📊 Running Architecture & Talking Points Table
+
+| Architecture Component | Technical Implementation | Why We Built It This Way (Design Decision) | Interview Talking Point (How to Articulate It) |
+|---|---|---|---|
+| **IaC Modernization** | Terraform (modular structure, input variables, local values) | Cloud-agnostic syntax reusable across multi-cloud client environments (AWS + Azure). | *"We architected modular, reusable Terraform modules so onboarding the next portfolio company requires adding a configuration block, not rewriting 100 lines of HCL."* |
+| **Data Ingestion & Processing** | AWS Lambda (Python 3.12) with S3 Event Trigger | Zero idle costs; serverless compute scales instantly on file uploads without managing EC2 instances. | *"We chose event-driven Lambda over AWS Glue because the initial ingestion only requires schema validation and partitioning—giving us 200ms latency at near-zero cost."* |
+| **Storage Architecture** | Dual S3 Buckets (`raw` & `processed`) via reusable module | Complete separation between untrusted raw client uploads and sanitized, queryable financial data. | *"We enforced a clean two-tier storage layer: raw staging with 90-day lifecycle policies, and processed data partitioned by date for fast downstream analytics."* |
+| **Security & Compliance** | AES256 SSE, Block Public Access (all 4 flags), Least-Privilege IAM | Private Equity portfolio financial data is highly sensitive and subject to strict compliance (SOC2, SEC). | *"Security was baked in from day one: zero public S3 access, default AES256 encryption, and granular IAM roles separating Lambda write access from analyst read access."* |
+| **Observability & Health** | CloudWatch Executive Dashboard + Metric Alarms + SNS | Proactive monitoring of ingestion velocity, execution duration, and pipeline errors. | *"We built an operational CloudWatch dashboard tracking invocations, error rates, and 200ms latency with automated SNS alerts if errors exceed thresholds."* |
+| **Zero-Trust CI/CD** | GitHub Actions with AWS OIDC Federation (Zero Static Keys) | Long-lived AWS access keys in GitHub Secrets represent a major attack vector for credential leakage. | *"We eliminated static AWS credentials entirely from our CI/CD pipeline by using OIDC role assumption with short-lived tokens—critical for financial clients."* |
+| **DevSecOps Gatekeeping** | `tfsec` Static Code Scanning in CI/CD | Shifting security left—catching infrastructure misconfigurations before code ever deploys to AWS. | *"Every Pull Request is automatically scanned by `tfsec` to prevent security drift, open CIDR blocks, or unencrypted storage from ever reaching production."* |
+| **FinOps Cost Governance** | `infracost` in Pull Request pipeline | PE portfolio companies are margin-sensitive; unexpected cloud bills directly hurt client trust and EBITDA. | *"We integrated Infracost directly into our PR workflow, giving stakeholders and clients complete visibility into the exact monthly dollar impact before merging."* |
+| **State Governance & Safety** | S3 Remote Backend + DynamoDB State Locking (`LockID`) | Prevents multiple engineers or concurrent CI pipelines from corrupting the Terraform state file. | *"We implemented remote state with DynamoDB distributed locking, ensuring state integrity across distributed team deployments."* |
+
+---
+
+## 🔍 Deep-Dive Explanations
+
+### 1. How the Secret Value Was Determined (`AWS_ROLE_ARN`)
+
+#### The Question:
+> *"How did you determine the secret value `arn:aws:iam::846472215760:role/project-apex-github-actions-role`?"*
+
+#### The Answer:
+In AWS, every single resource has a globally unique identifier called an **ARN (Amazon Resource Name)**.
+
+1. In [`terraform/iam.tf`](file:///Users/jeremidavis-wright/Dropbox/pe-data-landing-zone/terraform/iam.tf), we wrote the Terraform code that defines this IAM role:
+   ```hcl
+   resource "aws_iam_role" "github_actions" {
+     name = "${var.project_name}-github-actions-role"
+     assume_role_policy = data.aws_iam_policy_document.github_actions_assume_role.json
+   }
+   ```
+2. In [`terraform/outputs.tf`](file:///Users/jeremidavis-wright/Dropbox/pe-data-landing-zone/terraform/outputs.tf), we asked Terraform to export the ARN once created:
+   ```hcl
+   output "github_actions_role_arn" {
+     description = "ARN of the IAM role for GitHub Actions"
+     value       = aws_iam_role.github_actions.arn
+   }
+   ```
+3. When you ran `terraform apply`, Terraform created the role in your AWS account (`846472215760`) and printed the exact output:
+   ```text
+   github_actions_role_arn = "arn:aws:iam::846472215760:role/project-apex-github-actions-role"
+   ```
+4. **Why GitHub Needs It:** GitHub Actions uses this ARN to ask AWS: *"I am repository `maxx1/pe-data-landing-zone`. Please issue me a temporary 1-hour credential to run Terraform plan on this role's behalf."*
+
+---
+
+### 2. What Is `tfsec`? (DevSecOps / Shift-Left Security)
+
+#### What It Is:
+`tfsec` is an automated **static analysis security scanner** built specifically for Terraform. It parses your `.tf` HCL code *before* deployment to identify security vulnerabilities, misconfigurations, and compliance violations (the industry calls this **"Shift-Left Security"**—catching bugs early in development rather than finding them in production).
+
+#### What It Checks:
+* **Storage Encryption:** Flags any S3 bucket or EBS volume lacking server-side encryption.
+* **Public Exposure:** Detects missing `aws_s3_bucket_public_access_block` resources or bucket policies allowing public `*` access.
+* **Overly Permissive IAM:** Flags wildcards (`Action: "*"`, `Resource: "*"`) that violate least-privilege principles.
+* **Network Vulnerabilities:** Warns against Security Group rules allowing unrestricted ingress (`0.0.0.0/0`) on administrative ports (e.g., SSH port 22, RDP port 3389).
+* **Audit & Logging:** Ensures access logging is enabled on sensitive resources.
+
+#### Why It Matters to Accordion & Private Equity:
+Private Equity portfolio company acquisitions involve sensitive financial ledgers, employee PII, and proprietary operating data subject to strict audit frameworks (SOC2 Type II, ISO 27001, SEC compliance). If an engineer accidentally makes a bucket public or leaves a port open in a pull request, `tfsec` fails the CI/CD pipeline immediately, blocking the merge before any risk reaches AWS.
+
+---
+
+### 3. What Is `Infracost`? (FinOps / Cloud Cost Governance)
+
+#### What It Is:
+`Infracost` is a **FinOps (Financial Operations) engine** that reads Terraform code changes and calculates the **exact dollar impact on your monthly AWS bill** before code is merged.
+
+#### How It Works in CI/CD:
+1. An engineer opens a Pull Request that provisions a VPC NAT Gateway and scales an RDS instance.
+2. Infracost inspects the plan against the live AWS Pricing API (accounting for region, storage classes, and data transfer).
+3. Infracost automatically posts a detailed financial comment directly on the GitHub Pull Request:
+   ```text
+   💰 Infracost Cloud Cost Estimate:
+   
+   Project: project-apex-dev
+   Monthly cost: $42.00 → $60.50 (+$18.50/mo)
+   
+   Resource Breakdown:
+   + aws_s3_bucket.raw_data          +$0.50 (Standard Storage)
+   + aws_lambda_function.processor   +$0.20 (1M Invocations @ 256MB)
+   + aws_cloudwatch_dashboard        +$3.00 (3 Dashboards)
+   ```
+
+#### Why It Matters to Accordion & Private Equity:
+PE sponsors acquire mid-market companies to optimize EBITDA, streamline margins, and maximize enterprise exit multiples. Unexpected cloud bills directly erode portfolio EBITDA. By integrating `infracost` into the CI/CD workflow, you demonstrate consulting maturity:
+
+> 💬 **Your Interview Delivery Quote:**
+> *"We don't just engineer systems for speed and uptime; we build financial discipline directly into our engineering workflow. With Infracost, executive stakeholders and operating partners see the exact dollar impact of every infrastructure decision before we ever merge to production."*
+
+---
+
+### 🛡️ DevSecOps & FinOps Comparison at a Glance
+
+| Tool | Discipline | Stage | Question It Answers | Business Impact for PE |
+|---|---|---|---|---|
+| **`tfsec`** | **DevSecOps** | Pre-Deploy (PR) | *"Is this infrastructure secure and compliant?"* | Prevents data breaches, regulatory fines, and audit failures. |
+| **`infracost`** | **FinOps** | Pre-Deploy (PR) | *"How much will this cost the client per month?"* | Protects EBITDA margins and eliminates surprise cloud invoices. |
+
+---
+
+## 🎯 Quick-Fire Interview Q&A
+
+### Q1: *"Why did you use Lambda instead of AWS Glue for processing?"*
+> **Answer:** *"For raw ingestion, file validation, and date partitioning of incoming financial CSVs, Lambda starts in 200 milliseconds and costs fractions of a cent. AWS Glue is designed for heavy distributed Spark jobs and complex ETL transforms, with a minimum billing duration and warm-up time. For this pipeline, Lambda provides near-zero cost and immediate responsiveness. If the portfolio company later requires complex machine learning transforms or distributed joins across multi-terabyte datasets, we can seamlessly promote the pipeline to Glue or Step Functions."*
+
+### Q2: *"Why did you choose Terraform over CloudFormation?"*
+> **Answer:** *"Many Private Equity clients have heterogeneous IT environments—some subsidiaries run in AWS, while others run in Azure or on-premises. While CloudFormation is native to AWS, Terraform is cloud-agnostic. Mastering Terraform allows a consulting team to deliver consistent Infrastructure-as-Code standards, module patterns, and CI/CD pipelines across both AWS and Azure clients without retraining the engineering staff."*
+
+### Q3: *"How do you handle secrets and authentication in your deployment pipeline?"*
+> **Answer:** *"We use OpenID Connect (OIDC) federation between GitHub Actions and AWS IAM. We do not store static AWS Access Keys or Secrets anywhere in GitHub. When a pipeline runs, GitHub requests an OIDC token, AWS STS validates the cryptographic signature against GitHub's identity provider, and assumes a temporary, least-privilege IAM role. This eliminates the risk of credential leakage or stale access key rotation."*

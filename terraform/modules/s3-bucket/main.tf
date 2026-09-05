@@ -66,6 +66,8 @@ resource "aws_s3_bucket_lifecycle_configuration" "this" {
     id     = "cost-optimization"
     status = "Enabled"
 
+    filter {}
+
     transition {
       days          = 30
       storage_class = "STANDARD_IA"
