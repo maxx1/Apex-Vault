@@ -17,10 +17,13 @@ This document is your **executive cheat sheet** for the Accordion interview. It 
    * Uploaded mock multi-entity financial transaction data to the raw bucket.
    * Serverless Python 3.12 Lambda processor triggered via S3 event notifications in real time.
    * Data validated, sanitized, and partitioned by date (`processed/2026/09/05/`) in **206.3 milliseconds** with 0 errors.
-4. **Production Observability Active in AWS Console:**
+4. **Serverless SQL Analytics Live in AWS Athena & Glue:**
+   * AWS Glue Data Catalog (`project_apex_financial_db` & `financial_records` table) mapped to the processed S3 data lake.
+   * Dedicated Amazon Athena Workgroup (`project-apex-analytics-workgroup`) executing financial queries in **431 milliseconds** with zero servers to manage.
+5. **Production Observability Active in AWS Console:**
    * Operational CloudWatch Dashboard (`project-apex-dev-pipeline`) monitoring live invocations, 0 errors, and sub-second latency.
    * Dual CloudWatch Metric Alarms (throttles and errors) active and verified in "OK" state.
-5. **Interview Assets & Governance:**
+6. **Interview Assets & Governance:**
    * 6 Architecture Decision Records explaining trade-offs (Terraform vs CloudFormation, Lambda vs Glue, OIDC vs static credentials, etc.).
    * DevSecOps (`tfsec`) and FinOps (`infracost`) quality gates integrated into GitHub Actions.
 
@@ -33,6 +36,7 @@ This document is your **executive cheat sheet** for the Accordion interview. It 
 | **IaC Modernization** | Terraform (modular structure, input variables, local values) | Cloud-agnostic syntax reusable across multi-cloud client environments (AWS + Azure). | *"We architected modular, reusable Terraform modules so onboarding the next portfolio company requires adding a configuration block, not rewriting 100 lines of HCL."* |
 | **Data Ingestion & Processing** | AWS Lambda (Python 3.12) with S3 Event Trigger | Zero idle costs; serverless compute scales instantly on file uploads without managing EC2 instances. | *"We chose event-driven Lambda over AWS Glue because the initial ingestion only requires schema validation and partitioning—giving us 200ms latency at near-zero cost."* |
 | **Storage Architecture** | Dual S3 Buckets (`raw` & `processed`) via reusable module | Complete separation between untrusted raw client uploads and sanitized, queryable financial data. | *"We enforced a clean two-tier storage layer: raw staging with 90-day lifecycle policies, and processed data partitioned by date for fast downstream analytics."* |
+| **Serverless Analytics & BI** | AWS Glue Data Catalog + Amazon Athena Workgroup | Exposes S3 financial data lake to standard ANSI SQL without provisioning or paying for idle database clusters. | *"We layered AWS Glue and Amazon Athena over the processed S3 data lake, allowing financial analysts and BI tools like Power BI to run complex SQL aggregations in 431ms with zero database maintenance."* |
 | **Security & Compliance** | AES256 SSE, Block Public Access (all 4 flags), Least-Privilege IAM | Private Equity portfolio financial data is highly sensitive and subject to strict compliance (SOC2, SEC). | *"Security was baked in from day one: zero public S3 access, default AES256 encryption, and granular IAM roles separating Lambda write access from analyst read access."* |
 | **Observability & Health** | CloudWatch Executive Dashboard + Metric Alarms + SNS | Proactive monitoring of ingestion velocity, execution duration, and pipeline errors. | *"We built an operational CloudWatch dashboard tracking invocations, error rates, and 200ms latency with automated SNS alerts if errors exceed thresholds."* |
 | **Zero-Trust CI/CD** | GitHub Actions with AWS OIDC Federation (Zero Static Keys) | Long-lived AWS access keys in GitHub Secrets represent a major attack vector for credential leakage. | *"We eliminated static AWS credentials entirely from our CI/CD pipeline by using OIDC role assumption with short-lived tokens—critical for financial clients."* |
