@@ -1,0 +1,62 @@
+# =============================================================================
+# Terraform Deploy — Production Workflow
+# =============================================================================
+# Runs when code is merged to the main branch.
+# Applies Terraform changes to provision/update AWS infrastructure.
+#
+# In a real consulting engagement:
+# - This would deploy to the client's AWS account
+# - A manual approval gate would be added before production
+# - Rollback procedures would be documented in the ADRs
+# =============================================================================
+
+name: "Terraform Deploy"
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "terraform/**"
+      - "lambda/**"
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  deploy:
+    name: "Deploy Infrastructure"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # OIDC authentication — no static AWS credentials
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: us-east-2
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.11.4"
+
+      - name: Terraform Init
+        working-directory: terraform
+        run: terraform init
+
+      - name: Terraform Plan
+        working-directory: terraform
+        run: terraform plan -no-color
+
+      - name: Terraform Apply
+        working-directory: terraform
+        run: terraform apply -auto-approve
