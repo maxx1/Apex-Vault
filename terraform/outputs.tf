@@ -49,3 +49,14 @@ output "vpc_id" {
   description = "ID of the VPC"
   value       = aws_vpc.main.id
 }
+
+output "athena_workgroup_name" {
+  description = "Name of the Athena workgroup for financial anaytics"
+  value = aws_athena_workgroup.analytics.name
+}
+
+output "glue_database_name" {
+  description = "Name of the Glue Catalog database"
+  value = aws_glue_catalog_database.financial_db.name
+}
+
