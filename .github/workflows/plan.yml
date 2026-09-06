@@ -66,19 +66,17 @@ jobs:
       # Post the plan output as a PR comment for review
       - name: Comment Plan on PR
         uses: actions/github-script@v7
+        env:
+          PLAN_OUTPUT: ${{ steps.plan.outputs.stdout }}
         with:
           script: |
-            const output = `#### Terraform Plan 📋
-            \`\`\`
-            ${{ steps.plan.outputs.stdout }}
-            \`\`\`
-            *Triggered by @${{ github.actor }} on \`${{ github.event.pull_request.head.ref }}\`*`;
-
+            const plan = process.env.PLAN_OUTPUT || 'Plan generated successfully.';
+            const body = `#### Terraform Plan 📋\n\`\`\`terraform\n${plan.slice(0, 60000)}\n\`\`\`\n*Automated PR check for Project Apex*`;
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: output
+              body: body
             });
 
       # Security scan — catches misconfigurations like unencrypted buckets
@@ -92,7 +90,6 @@ jobs:
   cost:
     name: "Cost Estimate"
     runs-on: ubuntu-latest
-    if: ${{ secrets.INFRACOST_API_KEY != '' }}
 
     steps:
       - name: Checkout Repository
