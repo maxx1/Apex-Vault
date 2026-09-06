@@ -50,3 +50,32 @@ resource "aws_s3_bucket_notification" "raw_data_trigger" {
 
   depends_on = [aws_lambda_permission.allow_s3_invoke]
 }
+
+# --- BAKER LOGISTICS (Portfolio Company #2)
+------------
+# Demonstrates multi-tenant scalability:
+# Onboarding a new aquisition
+# takes only 2 module calss instead of rewriting infrastructure
+
+module "baker_raw_data_bucket? {
+  sources = "./modules/s3-bucket"
+
+  bucket_name = "${var.project_name}-baker-logistics-raw-${data.aws_caller_identity.current.account_id}"
+  purpose     = "raw-data-ingestion"
+  versioning_enabled = true
+  enable_lifecycle = true
+  expiration_days = 90 # Raw data expires after 90 days
+  force_destroy = true
+}
+
+module "baker_processed_data_bucket" {
+  sources = "./modules/s3-bucket"
+
+  bucket_name = "${var.project_name}-baker-logistics-processed-${data.aws_caller_identity.current.account_id}"
+  purpose     = "processed-data-warehouse"
+  versioning_enabled = true
+  enable_lifecycle = true
+  expiration_days = 365  # Keep processed data longer than raw
+  force_destroy = true
+} 
+
