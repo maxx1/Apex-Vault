@@ -219,6 +219,61 @@ After enabling Infracost's CI/CD governance checks on our PR, three policy categ
 
 ---
 
+### 6. GitHub Actions OIDC Modernization & The "Chicken-and-Egg" IAM Problem
+
+#### The Background:
+In mid-2026, GitHub updated its OpenID Connect (OIDC) identity provider claims to prevent repository-spoofing and account-takeover attacks. Historically, GitHub tokens sent a simple subject claim string:
+```text
+repo:<org>/<repo>:ref:refs/heads/<branch>
+```
+Under GitHub's updated security specification, repositories are identified by **immutable internal IDs** alongside the repository name:
+```text
+repo:<org>@<org-id>/<repo>@<repo-id>:ref:refs/heads/<branch>
+```
+
+#### What Broke in CI/CD:
+When our GitHub Actions `Plan & Security Scan` job attempted to assume the AWS IAM role (`project-apex-github-actions-role`), AWS STS rejected the token with:
+```text
+Not authorized to perform: sts:AssumeRoleWithWebIdentity
+```
+The AWS IAM trust policy was evaluating `StringLike` against `repo:maxx1/pe-data-landing-zone:*`. Because the runtime OIDC token contained `@id` notations, the string pattern failed to match.
+
+#### The "Chicken-and-Egg" IaC Dilemma:
+This triggered a classic production infrastructure paradox:
+1. **The pipeline cannot run:** GitHub Actions needs to assume the role to run `terraform plan`.
+2. **Terraform cannot fix the role:** Because the role's trust policy in AWS rejects the pipeline, you cannot push a Terraform fix through CI/CD to update the policy.
+3. **The system is deadlocked:** The very tool designed to deploy changes is locked out of deploying its own permission fix.
+
+#### How We Solved It (The Production Remediation Pattern):
+In real-world enterprise operations, identity deadlocks require an **out-of-band administrative intervention** paired with **Infrastructure-as-Code reconciliation**:
+
+1. **Step 1 — Out-of-Band Live IAM Patching:**
+   Using the local administrator profile (`boom-admin`), we patched the live IAM role trust policy directly via the AWS CLI:
+   ```bash
+   aws iam update-assume-role-policy \
+     --role-name project-apex-github-actions-role \
+     --policy-document file://trust-policy.json
+   ```
+2. **Step 2 — Future-Proofing IaC in Code:**
+   In [`terraform/iam.tf`](file:///Users/jeremidavis-wright/Dropbox/pe-data-landing-zone/terraform/iam.tf), we broadened the `StringLike` condition to match both legacy and immutable claim formats:
+   ```hcl
+   "token.actions.githubusercontent.com:sub" = [
+     "repo:maxx1/${var.project_name}:*",
+     "repo:maxx1/pe-data-landing-zone:*",
+     # GitHub immutable subject claims (mid-2026) use @id notation
+     "repo:maxx1@*/pe-data-landing-zone@*:*",
+     "repo:*/${var.project_name}:*",
+     "repo:*/pe-data-landing-zone:*"
+   ]
+   ```
+3. **Step 3 — State Reconciliation:**
+   Committed and pushed the HCL change. The next PR run passed with **100% green checks** (Infracost, Cost Estimate, Plan & Security Scan), confirming state alignment between Git and AWS.
+
+> 💬 **Your Interview Delivery Quote:**
+> *"When building zero-trust OIDC pipelines, you occasionally run into what I call the 'Chicken-and-Egg' IAM paradox: if a trust policy or claim specification changes upstream, the pipeline is locked out and cannot use Terraform to fix itself. We resolved this using a controlled two-step remediation: an out-of-band administrative CLI patch to restore pipeline connectivity, followed immediately by code synchronization in Terraform so state drift is eliminated. Understanding how to handle identity deadlocks without compromising security is a critical production skill."*
+
+---
+
 ## 🔧 Project Build: Troubleshooting Log & Lessons Learned
 
 This section documents every real-world issue we encountered and resolved during the build. In an interview, being able to speak to troubleshooting experience is just as valuable as the architecture itself.
@@ -253,9 +308,11 @@ This section documents every real-world issue we encountered and resolved during
 | # | What Happened | Root Cause | Fix | Lesson |
 |---|---|---|---|---|
 | 10 | GitHub Actions workflow failed on first run | `INFRACOST_API_KEY` secret was not yet added to the repository | Added the API key as a GitHub repository secret | CI/CD pipelines fail fast when secrets are missing — this is by design |
-| 11 | `Cost Estimate` job failed | Infracost was configured to use a Service Account token, which cannot be used for CLI/CI/CD | Needed a **CLI token** (from the "CLI tokens" section, not "API tokens") | Service Account tokens ≠ CLI tokens in Infracost |
+| 11 | `Cost Estimate` job failed | Infracost was configured with a Service Account token, which cannot be used for CLI/CI/CD | Generated and supplied a dedicated **CLI token** from Infracost dashboard | Service Account tokens ≠ CLI tokens in Infracost |
 | 12 | PR pipeline didn't re-run after adding secrets | The updated `plan.yml` workflow file was modified locally but never pushed | `git add .github/workflows/plan.yml && git commit && git push` | Secrets alone don't trigger runs — code changes do |
-| 13 | GitHub OIDC trust policy rejected the repository | IAM trust policy only accepted `project-apex` but repo is named `pe-data-landing-zone` | Updated `iam.tf` to accept both repository names in the OIDC condition | OIDC `sub` claim must match the *exact* GitHub repo name |
+| 13 | GitHub OIDC trust policy rejected repo name | IAM trust policy only accepted `project-apex` but repo is named `pe-data-landing-zone` | Updated `iam.tf` to accept both repository names in the OIDC condition | OIDC `sub` claim must match the *exact* GitHub repo name |
+| 14 | GitHub Actions OIDC failed with `sts:AssumeRoleWithWebIdentity` | GitHub mid-2026 update introduced immutable `@id` notation in `sub` claims | Broadened `StringLike` condition to include `repo:maxx1@*/pe-data-landing-zone@*:*` | Identity provider claim schemas evolve; use resilient pattern matching |
+| 15 | "Chicken-and-Egg" IAM deadlock in CI/CD | Pipeline couldn't assume role to run `terraform plan`, so Terraform couldn't deploy the IAM fix | Patched live IAM role via AWS CLI (`aws iam update-assume-role-policy`), then committed HCL fix | Identity failures blocking IaC require out-of-band admin repair followed by code sync |
 
 ---
 
@@ -263,8 +320,8 @@ This section documents every real-world issue we encountered and resolved during
 
 | # | What Happened | Root Cause | Fix | Lesson |
 |---|---|---|---|---|
-| 14 | CloudWatch dashboard not visible | Console region was set to `us-east-1` (N. Virginia) but resources are in `us-east-2` (Ohio) | Switched region dropdown to **US East (Ohio)** | AWS resources are regional — always verify the console region matches your deployment |
-| 15 | Athena workgroup dropdown empty | Was on the Athena splash page, not the query editor | Clicked "Query your data in Athena console" → "Launch Query Editor" | Athena has multiple landing pages; the workgroup selector is in the query editor |
+| 16 | CloudWatch dashboard not visible | Console region was set to `us-east-1` (N. Virginia) but resources are in `us-east-2` (Ohio) | Switched region dropdown to **US East (Ohio)** | AWS resources are regional — always verify the console region matches your deployment |
+| 17 | Athena workgroup dropdown empty | Was on the Athena splash page, not the query editor | Clicked "Query your data in Athena console" → "Launch Query Editor" | Athena has multiple landing pages; the workgroup selector is in the query editor |
 
 ---
 
@@ -272,9 +329,9 @@ This section documents every real-world issue we encountered and resolved during
 
 | # | What Happened | Root Cause | Fix | Lesson |
 |---|---|---|---|---|
-| 16 | Repository not visible on GitHub | Repo only existed locally (`git init`); had not been created on GitHub or pushed | Created repo on GitHub, then `git remote add origin` + `git push` | `git init` is local-only; GitHub requires explicit repo creation |
-| 17 | Infracost showed `pe-data-landing-zone` but expected `project-apex` | GitHub repo was named `pe-data-landing-zone` before the rebrand to Project Apex | The GitHub repo name doesn't need to match the internal project name | Git repo names and internal project branding are independent |
-| 18 | Initial commit had typo in message | Committed with "PE daa landing zone" instead of "PE data landing zone" | Left as-is (rewriting git history on public repos is risky) | Commit messages are permanent; double-check before committing |
+| 18 | Repository not visible on GitHub | Repo only existed locally (`git init`); had not been created on GitHub or pushed | Created repo on GitHub, then `git remote add origin` + `git push` | `git init` is local-only; GitHub requires explicit repo creation |
+| 19 | Infracost showed `pe-data-landing-zone` but expected `project-apex` | GitHub repo was named `pe-data-landing-zone` before the rebrand to Project Apex | The GitHub repo name doesn't need to match the internal project name | Git repo names and internal project branding are independent |
+| 20 | Initial commit had typo in message | Committed with "PE daa landing zone" instead of "PE data landing zone" | Left as-is (rewriting git history on public repos is risky) | Commit messages are permanent; double-check before committing |
 
 ---
 
@@ -299,3 +356,10 @@ This section documents every real-world issue we encountered and resolved during
 
 ### Q5: *"Walk me through a real troubleshooting scenario you faced."*
 > **Answer:** *"When we first enabled the CI/CD pipeline, the GitHub Actions OIDC authentication failed because the IAM trust policy was scoped to the internal project name 'project-apex', but the GitHub repository was named 'pe-data-landing-zone'. The OIDC subject claim uses the exact repository name, so we updated the IAM trust policy to accept both names. This is a common gotcha when branding and repository names diverge — and exactly the kind of issue you catch in a PR pipeline before it ever hits production."*
+
+### Q6: *"What is the 'Chicken-and-Egg' problem in automated CI/CD infrastructure deployments, and how do you resolve it?"*
+> **Answer:** *"If an IAM trust policy or OIDC claim condition breaks, the pipeline is locked out of AWS and cannot run `terraform apply` to fix itself. You cannot use automated GitOps to resolve an identity failure that prevents GitOps from authenticating in the first place. The resolution requires an out-of-band administrative intervention: update the trust policy directly in AWS via the AWS CLI using elevated credentials to restore pipeline connectivity, immediately followed by committing the synchronized HCL changes to code so Terraform state doesn't drift. Being able to recognize and resolve this chicken-and-egg pattern is a hallmark of real-world production DevOps experience."*
+
+### Q7: *"How does GitHub's modern OIDC subject claim format work and what changed in 2026?"*
+> **Answer:** *"Historically, GitHub Actions OIDC subject claims followed a simple format: `repo:<org>/<repo>:ref:refs/heads/<branch>`. However, to prevent repository spoofing and handle repository renames securely, GitHub introduced immutable repository identifiers containing numeric internal IDs (`repo:<org>@<org-id>/<repo>@<repo-id>:ref:...`). If an AWS IAM trust policy only uses rigid string matching without accounting for immutable ID patterns using `StringLike` wildcards (`repo:<org>@*/<repo>@*:*`), the OIDC handshake fails. We architected our IAM trust policy with flexible yet secure wildcard matching to future-proof against these platform-level identity format migrations."*
+
