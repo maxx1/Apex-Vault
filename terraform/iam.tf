@@ -160,6 +160,10 @@ resource "aws_iam_role" "github_actions" {
         Condition = {
           StringLike = {
             "token.actions.githubusercontent.com:sub" = [
+              "repo:maxx1/${var.project_name}:*",
+              "repo:maxx1/pe-data-landing-zone:*",
+              # GitHub's new immutable subject claims (mid-2026) use @id notation
+              "repo:maxx1@*/pe-data-landing-zone@*:*",
               "repo:*/${var.project_name}:*",
               "repo:*/pe-data-landing-zone:*"
             ]
