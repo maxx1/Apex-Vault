@@ -41,9 +41,10 @@ provider "aws" {
   default_tags {
     tags = {
       Project     = var.project_name
-      Environment = var.environment
+      Environment = title(var.environment)  # Infracost requires Dev/Stage/Prod (not dev/staging/prod)
       ManagedBy   = "terraform"
       Client      = var.client_name
+      Service     = "data-landing-zone"     # Required by Infracost FinOps tagging policy
     }
   }
 }

@@ -13,7 +13,7 @@ variable "project_name" {
 }
 
 variable "environment" {
-  description = "Deployment environment (dev, staging, prod)"
+  description = "Deployment environment (dev, staging, prod) — auto title-cased in tags"
   type        = string
   default     = "dev"
 

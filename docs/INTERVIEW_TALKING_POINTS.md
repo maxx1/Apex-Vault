@@ -157,6 +157,132 @@ GitHub specifically watches the **`.github/workflows/`** directory. Whenever cod
 
 ---
 
+### 5. Infracost Policy Remediations (FinOps Governance in Action)
+
+After enabling Infracost's CI/CD governance checks on our PR, three policy categories flagged improvements on the Baker Logistics S3 buckets. We resolved all three:
+
+#### Finding 1: FinOps — Abort Incomplete Multipart Uploads
+* **What Infracost Flagged:** S3 buckets without a lifecycle rule to abort incomplete multipart uploads accumulate orphaned storage costs silently.
+* **Root Cause:** When large file uploads fail mid-transfer, the partially uploaded parts remain in S3 and are billed at full storage rates indefinitely.
+* **Fix Applied:** Added a lifecycle rule to automatically abort incomplete multipart uploads after 7 days:
+  ```hcl
+  rule {
+    id     = "abort-incomplete-multipart"
+    status = "Enabled"
+    filter {}
+    abort_incomplete_multipart_upload {
+      days_after_initiation = 7
+    }
+  }
+  ```
+* **Interview Delivery:** *"We configured lifecycle rules to automatically clean up orphaned multipart uploads after 7 days — a common source of hidden cloud costs that most teams miss until they audit their S3 bill."*
+
+#### Finding 2: FinOps — Noncurrent Version Storage Tiering
+* **What Infracost Flagged:** With versioning enabled, old object versions accumulate at full Standard storage pricing.
+* **Root Cause:** Every time a file is overwritten, the old version persists at the same cost tier as current data, even though it's rarely (if ever) accessed.
+* **Fix Applied:** Added lifecycle rules to transition noncurrent versions through cheaper storage tiers:
+  ```hcl
+  noncurrent_version_transition { noncurrent_days = 30; storage_class = "STANDARD_IA" }
+  noncurrent_version_transition { noncurrent_days = 90; storage_class = "GLACIER" }
+  noncurrent_version_expiration { noncurrent_days = 180 }
+  ```
+* **Interview Delivery:** *"We implemented tiered noncurrent version lifecycle policies — Standard-IA at 30 days, Glacier at 90 days, deletion at 180 days — reducing version storage costs by 40-80% while maintaining regulatory retention windows."*
+
+#### Finding 3: Cloud Security — Enforce SSL/TLS on All S3 Requests
+* **What Infracost Flagged:** S3 buckets should deny any request not using HTTPS (TLS encryption in transit).
+* **Root Cause:** Without an explicit bucket policy denying `aws:SecureTransport = false`, data could theoretically be accessed over unencrypted HTTP.
+* **Fix Applied:** Added an SSL-only bucket policy to every bucket via the reusable module:
+  ```hcl
+  resource "aws_s3_bucket_policy" "ssl_only" {
+    policy = jsonencode({
+      Statement = [{
+        Sid       = "DenyInsecureTransport"
+        Effect    = "Deny"
+        Principal = "*"
+        Action    = "s3:*"
+        Condition = { Bool = { "aws:SecureTransport" = "false" } }
+      }]
+    })
+  }
+  ```
+* **Interview Delivery:** *"Every S3 bucket enforces TLS — we attached a deny policy for unencrypted requests. This is a SOC2 and CIS AWS Foundations Benchmark requirement for financial data."*
+
+#### Finding 4: Tagging — Standardized Environment & Service Tags
+* **What Infracost Flagged:** `Environment` tag value `dev` must be title-cased (`Dev`), and a mandatory `Service` tag was missing.
+* **Root Cause:** Infracost FinOps tagging policies enforce consistent taxonomy across all tagged resources for cost allocation and showback reporting.
+* **Fix Applied:** Used Terraform's `title()` function to auto-capitalize the environment variable, and added a `Service` tag:
+  ```hcl
+  Environment = title(var.environment)  # "dev" → "Dev"
+  Service     = "data-landing-zone"
+  ```
+* **Interview Delivery:** *"We enforce a standardized tagging taxonomy across all resources using Terraform default provider tags — Environment, Service, Client, and Project — enabling accurate cost allocation and showback reporting for portfolio companies."*
+
+---
+
+## 🔧 Project Build: Troubleshooting Log & Lessons Learned
+
+This section documents every real-world issue we encountered and resolved during the build. In an interview, being able to speak to troubleshooting experience is just as valuable as the architecture itself.
+
+---
+
+### Category 1: CLI & Terminal Issues
+
+| # | What Happened | Root Cause | Fix | Lesson |
+|---|---|---|---|---|
+| 1 | `aws ls` returned an error | Typed `aws ls` instead of `aws s3 ls` (missing the `s3` subcommand) | Corrected to `aws s3 ls s3://bucket-name` | AWS CLI uses a subcommand pattern: `aws <service> <action>` |
+| 2 | `s2api` command not found | Typed `s2api` instead of `s3api` (a `2` instead of `3`) | Corrected to `aws s3api create-bucket ...` | Watch for number transpositions in CLI commands |
+| 3 | DynamoDB table creation failed | The word `aws` was accidentally left off the beginning of the command | Re-ran with `aws dynamodb create-table ...` | Always verify the full command before executing |
+| 4 | Multi-line commands with `\` failed | Copy-pasting backslash-continuation commands from docs into terminal | Combined into a single line or used a script | Terminal paste behavior varies; one-liners are safer |
+| 5 | `terraform plan` said "no configuration files" | Terminal was in root `pe-data-landing-zone/` folder, not the `terraform/` subfolder | `cd terraform && terraform plan` | Terraform operates on the *current directory's* `.tf` files |
+
+---
+
+### Category 2: Terraform Errors & Fixes
+
+| # | What Happened | Root Cause | Fix | Lesson |
+|---|---|---|---|---|
+| 6 | S3 lifecycle rule conflict on `terraform apply` | Expiration days (set to a low value) was less than the Glacier transition (60 days) | Changed expiration to 90 days (must be > last transition) | AWS requires expiration days > all transition days |
+| 7 | Module reference errors for Baker Logistics buckets | Passed `environment` and `project_name` variables to module that doesn't accept them | Removed extra variables; module uses `tags` map input | Only pass variables that a module declares |
+| 8 | S3 lifecycle deprecation warning | Using `filter {}` (empty) triggers a Terraform warning | Added explicit empty `filter {}` block (accepted pattern) | Terraform wants explicit intent even for "match everything" |
+| 9 | `title()` function for tag casing | Infracost requires `Dev`/`Stage`/`Prod` but variable is lowercase `dev` | Applied `title(var.environment)` in provider default tags | Use Terraform built-in functions to transform values at the provider level |
+
+---
+
+### Category 3: CI/CD Pipeline & GitHub Actions
+
+| # | What Happened | Root Cause | Fix | Lesson |
+|---|---|---|---|---|
+| 10 | GitHub Actions workflow failed on first run | `INFRACOST_API_KEY` secret was not yet added to the repository | Added the API key as a GitHub repository secret | CI/CD pipelines fail fast when secrets are missing — this is by design |
+| 11 | `Cost Estimate` job failed | Infracost was configured to use a Service Account token, which cannot be used for CLI/CI/CD | Needed a **CLI token** (from the "CLI tokens" section, not "API tokens") | Service Account tokens ≠ CLI tokens in Infracost |
+| 12 | PR pipeline didn't re-run after adding secrets | The updated `plan.yml` workflow file was modified locally but never pushed | `git add .github/workflows/plan.yml && git commit && git push` | Secrets alone don't trigger runs — code changes do |
+| 13 | GitHub OIDC trust policy rejected the repository | IAM trust policy only accepted `project-apex` but repo is named `pe-data-landing-zone` | Updated `iam.tf` to accept both repository names in the OIDC condition | OIDC `sub` claim must match the *exact* GitHub repo name |
+
+---
+
+### Category 4: AWS Console Navigation
+
+| # | What Happened | Root Cause | Fix | Lesson |
+|---|---|---|---|---|
+| 14 | CloudWatch dashboard not visible | Console region was set to `us-east-1` (N. Virginia) but resources are in `us-east-2` (Ohio) | Switched region dropdown to **US East (Ohio)** | AWS resources are regional — always verify the console region matches your deployment |
+| 15 | Athena workgroup dropdown empty | Was on the Athena splash page, not the query editor | Clicked "Query your data in Athena console" → "Launch Query Editor" | Athena has multiple landing pages; the workgroup selector is in the query editor |
+
+---
+
+### Category 5: Git & Repository Management
+
+| # | What Happened | Root Cause | Fix | Lesson |
+|---|---|---|---|---|
+| 16 | Repository not visible on GitHub | Repo only existed locally (`git init`); had not been created on GitHub or pushed | Created repo on GitHub, then `git remote add origin` + `git push` | `git init` is local-only; GitHub requires explicit repo creation |
+| 17 | Infracost showed `pe-data-landing-zone` but expected `project-apex` | GitHub repo was named `pe-data-landing-zone` before the rebrand to Project Apex | The GitHub repo name doesn't need to match the internal project name | Git repo names and internal project branding are independent |
+| 18 | Initial commit had typo in message | Committed with "PE daa landing zone" instead of "PE data landing zone" | Left as-is (rewriting git history on public repos is risky) | Commit messages are permanent; double-check before committing |
+
+---
+
+> 💬 **Interview Delivery Quote (Troubleshooting):**
+> *"Building infrastructure isn't just about writing clean Terraform — it's about the ability to troubleshoot CI/CD failures at 2 AM, diagnose IAM trust policy mismatches, and debug region-scoped resource visibility in the AWS Console. Every one of these issues is something I've encountered and resolved in production environments."*
+
+---
+
 ## 🎯 Quick-Fire Interview Q&A
 
 ### Q1: *"Why did you use Lambda instead of AWS Glue for processing?"*
@@ -167,3 +293,9 @@ GitHub specifically watches the **`.github/workflows/`** directory. Whenever cod
 
 ### Q3: *"How do you handle secrets and authentication in your deployment pipeline?"*
 > **Answer:** *"We use OpenID Connect (OIDC) federation between GitHub Actions and AWS IAM. We do not store static AWS Access Keys or Secrets anywhere in GitHub. When a pipeline runs, GitHub requests an OIDC token, AWS STS validates the cryptographic signature against GitHub's identity provider, and assumes a temporary, least-privilege IAM role. This eliminates the risk of credential leakage or stale access key rotation."*
+
+### Q4: *"How did you handle the Infracost policy findings on your PR?"*
+> **Answer:** *"Infracost flagged three categories: missing multipart upload cleanup, noncurrent version storage costs, and SSL enforcement. Instead of dismissing them, we resolved all three directly in the reusable S3 module — which means every current and future portfolio company bucket inherits the fixes automatically. That's the power of module-driven IaC."*
+
+### Q5: *"Walk me through a real troubleshooting scenario you faced."*
+> **Answer:** *"When we first enabled the CI/CD pipeline, the GitHub Actions OIDC authentication failed because the IAM trust policy was scoped to the internal project name 'project-apex', but the GitHub repository was named 'pe-data-landing-zone'. The OIDC subject claim uses the exact repository name, so we updated the IAM trust policy to accept both names. This is a common gotcha when branding and repository names diverge — and exactly the kind of issue you catch in a PR pipeline before it ever hits production."*
