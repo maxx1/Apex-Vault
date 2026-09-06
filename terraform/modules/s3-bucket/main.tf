@@ -55,13 +55,87 @@ resource "aws_s3_bucket_public_access_block" "this" {
   restrict_public_buckets = true
 }
 
+# --- SSL-Only Bucket Policy (Cloud Security) ---
+# Enforces TLS/HTTPS for all requests — denies any unencrypted HTTP access.
+# Required for financial data compliance (SOC2, SEC) and flagged by Infracost
+# cloud security policies if missing.
+resource "aws_s3_bucket_policy" "ssl_only" {
+  bucket = aws_s3_bucket.this.id
+
+  # Ensure public access block is applied before the policy
+  depends_on = [aws_s3_bucket_public_access_block.this]
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid       = "DenyInsecureTransport"
+        Effect    = "Deny"
+        Principal = "*"
+        Action    = "s3:*"
+        Resource = [
+          aws_s3_bucket.this.arn,
+          "${aws_s3_bucket.this.arn}/*"
+        ]
+        Condition = {
+          Bool = {
+            "aws:SecureTransport" = "false"
+          }
+        }
+      }
+    ]
+  })
+}
+
 # --- Lifecycle Policy (Cost Optimization) ---
-# Automatically transitions data to cheaper storage tiers over time.
-# Standard → Standard-IA (30 days) → Glacier (60 days) → Delete
+# Three rules for enterprise-grade cost governance:
+# 1. Abort incomplete multipart uploads after 7 days (prevents orphaned storage costs)
+# 2. Transition noncurrent versions to cheaper storage before deletion
+# 3. Standard tiering: Standard → Standard-IA (30d) → Glacier (60d) → Delete
 resource "aws_s3_bucket_lifecycle_configuration" "this" {
   count  = var.enable_lifecycle ? 1 : 0
   bucket = aws_s3_bucket.this.id
 
+  # Rule 1: Abort incomplete multipart uploads
+  # Large file uploads that fail mid-transfer leave orphaned parts that
+  # silently accumulate storage costs. This rule cleans them up automatically.
+  rule {
+    id     = "abort-incomplete-multipart"
+    status = "Enabled"
+
+    filter {}
+
+    abort_incomplete_multipart_upload {
+      days_after_initiation = 7
+    }
+  }
+
+  # Rule 2: Transition noncurrent object versions to cheaper storage
+  # When versioning is enabled, old versions pile up at full price.
+  # This moves them to Standard-IA after 30 days and Glacier after 90 days
+  # before final cleanup — saving 40-80% on storage costs.
+  rule {
+    id     = "noncurrent-version-optimization"
+    status = "Enabled"
+
+    filter {}
+
+    noncurrent_version_transition {
+      noncurrent_days = 30
+      storage_class   = "STANDARD_IA"
+    }
+
+    noncurrent_version_transition {
+      noncurrent_days = 90
+      storage_class   = "GLACIER"
+    }
+
+    noncurrent_version_expiration {
+      noncurrent_days = 180
+    }
+  }
+
+  # Rule 3: Current object lifecycle tiering
   rule {
     id     = "cost-optimization"
     status = "Enabled"
