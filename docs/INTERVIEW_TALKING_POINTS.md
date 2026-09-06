@@ -133,6 +133,30 @@ PE sponsors acquire mid-market companies to optimize EBITDA, streamline margins,
 
 ---
 
+### 4. What Are the `.yaml` / `.yml` Workflow Files? (GitOps & CI/CD Pipelines)
+
+#### What YAML Is:
+**YAML** (*"YAML Ain't Markup Language"*) is the universal industry standard configuration language for modern cloud automation and DevOps (GitHub Actions, Kubernetes, Docker, GitLab, Azure DevOps). It uses human-readable indentation and key-value pairs instead of brackets or XML tags.
+
+#### How GitHub Actions Uses These Files:
+GitHub specifically watches the **`.github/workflows/`** directory. Whenever code events occur (opening a PR or merging to main), GitHub spins up a secure cloud container and executes the instructions in the `.yml` files.
+
+#### The Two Workflows in Project Apex:
+1. **`plan.yml` — The Pre-Deployment Safety Inspector (Triggers on Pull Requests):**
+   * **OIDC Login:** Temporarily assumes the AWS IAM role via OpenID Connect (zero stored passwords).
+   * **Terraform Plan:** Calculates what infrastructure will be created or modified.
+   * **PR Commenting:** Posts the exact plan output as an automated comment on the GitHub PR for peer review.
+   * **Security Scanning (`tfsec`):** Scans for compliance and cloud security misconfigurations.
+   * **Cost Projection (`infracost`):** Posts a comment estimating the monthly AWS cost impact.
+2. **`deploy.yml` — The Production Deployer (Triggers on Merge to `main`):**
+   * **Zero Laptop Deployments:** In enterprise IT and consulting, engineers never deploy to production from their personal laptops.
+   * **Automated Rollout:** Runs `terraform init` and `terraform apply` directly from the pipeline once code has been peer-reviewed and approved.
+
+> 💬 **Your Interview Delivery Quote:**
+> *"We built a GitOps delivery model using GitHub Actions workflows written in YAML. When an engineer opens a PR, `plan.yml` runs a dry-run plan, security scan with `tfsec`, and cost projection with `Infracost`. Once approved and merged, `deploy.yml` applies the changes to AWS using OIDC role federation with zero static secrets."*
+
+---
+
 ## 🎯 Quick-Fire Interview Q&A
 
 ### Q1: *"Why did you use Lambda instead of AWS Glue for processing?"*
