@@ -197,7 +197,9 @@ resource "aws_iam_role_policy" "github_actions_deploy" {
           "cloudwatch:*",
           "sns:*",
           "dynamodb:*",
-          "events:*"
+          "events:*",
+          "glue:*",
+          "athena:*"
         ]
         Resource = "*"
       }

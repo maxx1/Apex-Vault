@@ -313,6 +313,7 @@ This section documents every real-world issue we encountered and resolved during
 | 13 | GitHub OIDC trust policy rejected repo name | IAM trust policy only accepted `project-apex` but repo is named `pe-data-landing-zone` | Updated `iam.tf` to accept both repository names in the OIDC condition | OIDC `sub` claim must match the *exact* GitHub repo name |
 | 14 | GitHub Actions OIDC failed with `sts:AssumeRoleWithWebIdentity` | GitHub mid-2026 update introduced immutable `@id` notation in `sub` claims | Broadened `StringLike` condition to include `repo:maxx1@*/pe-data-landing-zone@*:*` | Identity provider claim schemas evolve; use resilient pattern matching |
 | 15 | "Chicken-and-Egg" IAM deadlock in CI/CD | Pipeline couldn't assume role to run `terraform plan`, so Terraform couldn't deploy the IAM fix | Patched live IAM role via AWS CLI (`aws iam update-assume-role-policy`), then committed HCL fix | Identity failures blocking IaC require out-of-band admin repair followed by code sync |
+| 16 | `Terraform Deploy` failed on merge to `main` | `project-apex-github-actions-role` lacked `glue:*` and `athena:*` permissions to query resources added in the analytics phase | Added `glue:*` and `athena:*` to `terraform-deploy` policy via CLI, then updated `iam.tf` | When expanding architecture to new services (e.g. Athena/Glue), ensure CI/CD deploy roles are granted permissions for the new service APIs |
 
 ---
 
@@ -320,8 +321,8 @@ This section documents every real-world issue we encountered and resolved during
 
 | # | What Happened | Root Cause | Fix | Lesson |
 |---|---|---|---|---|
-| 16 | CloudWatch dashboard not visible | Console region was set to `us-east-1` (N. Virginia) but resources are in `us-east-2` (Ohio) | Switched region dropdown to **US East (Ohio)** | AWS resources are regional — always verify the console region matches your deployment |
-| 17 | Athena workgroup dropdown empty | Was on the Athena splash page, not the query editor | Clicked "Query your data in Athena console" → "Launch Query Editor" | Athena has multiple landing pages; the workgroup selector is in the query editor |
+| 17 | CloudWatch dashboard not visible | Console region was set to `us-east-1` (N. Virginia) but resources are in `us-east-2` (Ohio) | Switched region dropdown to **US East (Ohio)** | AWS resources are regional — always verify the console region matches your deployment |
+| 18 | Athena workgroup dropdown empty | Was on the Athena splash page, not the query editor | Clicked "Query your data in Athena console" → "Launch Query Editor" | Athena has multiple landing pages; the workgroup selector is in the query editor |
 
 ---
 
@@ -329,9 +330,9 @@ This section documents every real-world issue we encountered and resolved during
 
 | # | What Happened | Root Cause | Fix | Lesson |
 |---|---|---|---|---|
-| 18 | Repository not visible on GitHub | Repo only existed locally (`git init`); had not been created on GitHub or pushed | Created repo on GitHub, then `git remote add origin` + `git push` | `git init` is local-only; GitHub requires explicit repo creation |
-| 19 | Infracost showed `pe-data-landing-zone` but expected `project-apex` | GitHub repo was named `pe-data-landing-zone` before the rebrand to Project Apex | The GitHub repo name doesn't need to match the internal project name | Git repo names and internal project branding are independent |
-| 20 | Initial commit had typo in message | Committed with "PE daa landing zone" instead of "PE data landing zone" | Left as-is (rewriting git history on public repos is risky) | Commit messages are permanent; double-check before committing |
+| 19 | Repository not visible on GitHub | Repo only existed locally (`git init`); had not been created on GitHub or pushed | Created repo on GitHub, then `git remote add origin` + `git push` | `git init` is local-only; GitHub requires explicit repo creation |
+| 20 | Infracost showed `pe-data-landing-zone` but expected `project-apex` | GitHub repo was named `pe-data-landing-zone` before the rebrand to Project Apex | The GitHub repo name doesn't need to match the internal project name | Git repo names and internal project branding are independent |
+| 21 | Initial commit had typo in message | Committed with "PE daa landing zone" instead of "PE data landing zone" | Left as-is (rewriting git history on public repos is risky) | Commit messages are permanent; double-check before committing |
 
 ---
 
