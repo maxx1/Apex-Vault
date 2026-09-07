@@ -148,7 +148,44 @@ resource "aws_cloudwatch_dashboard" "pipeline" {
           region = data.aws_region.current.name
           view   = "timeSeries"
         }
+      },
+      {
+        type   = "metric"
+        x      = 0
+        y      = 12
+        width  = 12
+        height = 6
+        properties = {
+          title   = "DynamoDB Read/Write Units"
+          metrics = [
+            ["AWS/DynamoDB", "ConsumedReadCapacityUnits", "TableName", aws_dynamodb_table.operational_data.name],
+            ["AWS/DynamoDB", "ConsumedWriteCapacityUnits", "TableName", aws_dynamodb_table.operational_data.name]
+          ]
+          period = 300
+          stat   = "Sum"
+          region = data.aws_region.current.name
+          view   = "timeSeries"
+        }
+      },
+      {
+        type   = "metric"
+        x      = 12
+        y      = 12
+        width  = 12
+        height = 6
+        properties = {
+          title   = "DynamoDB Latency (ms)"
+          metrics = [
+            ["AWS/DynamoDB", "SuccessfulRequestLatency", "TableName", aws_dynamodb_table.operational_data.name, "Operation", "GetItem"],
+            ["AWS/DynamoDB", "SuccessfulRequestLatency", "TableName", aws_dynamodb_table.operational_data.name, "Operation", "PutItem"]
+          ]
+          period = 300
+          stat   = "Average"
+          region = data.aws_region.current.name
+          view   = "timeSeries"
+        }
       }
     ]
   })
 }
+

@@ -1,0 +1,2878 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apex Vault | Portfolio Data Platform</title>
+    <meta name="description" content="Fragmented portfolio data costs PE firms millions in unrealized value. Apex Vault is a production grade cloud data landing zone engineered for Private Equity value creation.">
+    <meta property="og:title" content="Apex Vault | Portfolio Data Platform">
+    <meta property="og:description" content="Fragmented portfolio data costs PE firms millions in unrealized value. This platform eliminates the blind spots.">
+    <meta property="og:type" content="website">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* ========================================
+           DESIGN TOKENS
+           ======================================== */
+        :root {
+            --navy-deep: #0d1117;
+            --navy-bg: #141a22;
+            --navy-card: #1c2333;
+            --navy-card-hover: #222b3d;
+            --navy-card-border: #2a3348;
+            --text-primary: #ffffff;
+            --text-secondary: #8b949e;
+            --text-body: #c9d1d9;
+            --citron: #E5FF00;
+            --citron-hover: #d4ee00;
+            --citron-dim: rgba(229, 255, 0, 0.12);
+            --citron-border: rgba(229, 255, 0, 0.25);
+            --label-gold: #c9a84c;
+            --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            --max-width: 1140px;
+            --section-pad: 120px;
+            --section-pad-mobile: 64px;
+        }
+
+        /* ========================================
+           RESET & BASE
+           ======================================== */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            font-family: var(--font);
+            background: var(--navy-deep);
+            color: var(--text-body);
+            line-height: 1.7;
+            font-size: 16px;
+            overflow-x: hidden;
+        }
+
+        ::selection {
+            background: var(--citron);
+            color: var(--navy-deep);
+        }
+
+        a {
+            color: var(--citron);
+            text-decoration: none;
+            transition: opacity 0.2s ease;
+        }
+
+        a:hover {
+            opacity: 0.85;
+        }
+
+        img {
+            max-width: 100%;
+            display: block;
+        }
+
+        /* ========================================
+           LAYOUT
+           ======================================== */
+        .container {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 0 32px;
+        }
+
+        section {
+            padding: var(--section-pad) 0;
+            position: relative;
+        }
+
+        /* ========================================
+           TYPOGRAPHY
+           ======================================== */
+        .section-label {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--citron);
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .section-headline {
+            font-size: clamp(32px, 5vw, 48px);
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1.15;
+            margin-bottom: 24px;
+            max-width: 720px;
+        }
+
+        .section-body {
+            font-size: 17px;
+            line-height: 1.8;
+            color: var(--text-body);
+            max-width: 640px;
+        }
+
+        /* ========================================
+           NAVIGATION
+           ======================================== */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(13, 17, 23, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            transition: background 0.3s ease;
+        }
+
+        .nav-inner {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 0 32px;
+            height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-logo {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: 4px;
+            text-transform: uppercase;
+        }
+
+        .nav-logo span {
+            color: var(--citron);
+            font-weight: 300;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            transition: color 0.2s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--text-primary);
+            opacity: 1;
+        }
+
+        .nav-cta {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--navy-deep) !important;
+            background: var(--citron);
+            padding: 10px 24px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            transition: background 0.2s ease, transform 0.2s ease;
+        }
+
+        .nav-cta:hover {
+            background: var(--citron-hover);
+            opacity: 1;
+            transform: translateY(-1px);
+        }
+
+        /* ========================================
+           HERO
+           ======================================== */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            padding-top: 72px;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(ellipse 80% 60% at 20% 80%, rgba(229, 255, 0, 0.03) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 50% at 80% 20%, rgba(229, 255, 0, 0.02) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .hero-gradient-line {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--citron), transparent);
+            opacity: 0.3;
+        }
+
+        .hero-diagonal {
+            position: absolute;
+            top: 50%;
+            right: -10%;
+            width: 60%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(229, 255, 0, 0.15), transparent);
+            transform: rotate(-25deg);
+            transform-origin: center;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-label {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--citron);
+            margin-bottom: 32px;
+            opacity: 0;
+            animation: fadeUp 0.8s ease 0.2s forwards;
+        }
+
+        .hero-title {
+            font-size: clamp(56px, 8vw, 96px);
+            font-weight: 800;
+            color: var(--text-primary);
+            line-height: 0.95;
+            letter-spacing: -2px;
+            margin-bottom: 8px;
+            opacity: 0;
+            animation: fadeUp 0.8s ease 0.4s forwards;
+        }
+
+        .hero-parenthetical {
+            font-size: clamp(16px, 2.5vw, 22px);
+            font-weight: 300;
+            color: var(--text-secondary);
+            letter-spacing: 2px;
+            margin-bottom: 40px;
+            opacity: 0;
+            animation: fadeUp 0.8s ease 0.6s forwards;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(18px, 2.5vw, 22px);
+            font-weight: 400;
+            color: var(--text-body);
+            line-height: 1.6;
+            max-width: 600px;
+            margin-bottom: 48px;
+            opacity: 0;
+            animation: fadeUp 0.8s ease 0.8s forwards;
+        }
+
+        .hero-ctas {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            opacity: 0;
+            animation: fadeUp 0.8s ease 1s forwards;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--navy-deep);
+            background: var(--citron);
+            padding: 16px 32px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            font-family: var(--font);
+        }
+
+        .btn-primary:hover {
+            background: var(--citron-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(229, 255, 0, 0.2);
+            opacity: 1;
+        }
+
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-primary);
+            background: transparent;
+            padding: 16px 32px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            border: 1px solid var(--navy-card-border);
+            transition: all 0.3s ease;
+            font-family: var(--font);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--citron);
+            color: var(--citron);
+            opacity: 1;
+        }
+
+        /* ========================================
+           SECTION DIVIDERS
+           ======================================== */
+        .section-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--navy-card-border), transparent);
+        }
+
+        /* ========================================
+           PAIN POINT CARDS (Section 2)
+           ======================================== */
+        .pain-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1px;
+            background: var(--navy-card-border);
+            margin-top: 48px;
+        }
+
+        .pain-card {
+            background: var(--navy-card);
+            padding: 48px 36px;
+            transition: background 0.3s ease;
+        }
+
+        .pain-card:hover {
+            background: var(--navy-card-hover);
+        }
+
+        .pain-icon {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 24px;
+            opacity: 0.6;
+        }
+
+        .pain-card h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            line-height: 1.3;
+        }
+
+        .pain-card p {
+            font-size: 15px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* ========================================
+           METRICS BAR (Section 3)
+           ======================================== */
+        .metrics-bar {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1px;
+            background: var(--citron-border);
+            margin: 48px 0;
+            border: 1px solid var(--citron-border);
+        }
+
+        .metric-item {
+            background: var(--citron-dim);
+            padding: 32px 24px;
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--citron);
+            margin-bottom: 4px;
+        }
+
+        .metric-label {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        /* ========================================
+           CAPABILITY BARS (Section 4)
+           ======================================== */
+        .capability-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin-top: 48px;
+        }
+
+        .capability-bar {
+            background: var(--citron);
+            color: var(--navy-deep);
+            padding: 18px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .capability-bar:hover {
+            background: var(--citron-hover);
+            transform: translateX(4px);
+        }
+
+        .capability-bar .arrow {
+            font-size: 18px;
+            transition: transform 0.3s ease;
+        }
+
+        .capability-bar.active .arrow {
+            transform: rotate(90deg);
+        }
+
+        .capability-detail {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease, padding 0.4s ease;
+            background: var(--navy-card);
+            border: 1px solid var(--navy-card-border);
+            border-top: none;
+        }
+
+        .capability-detail.active {
+            max-height: 400px;
+            padding: 32px;
+        }
+
+        .capability-detail h4 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+        }
+
+        .capability-detail p {
+            font-size: 15px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            line-height: 1.7;
+        }
+
+        .capability-metrics {
+            display: flex;
+            gap: 32px;
+        }
+
+        .capability-metric {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+        }
+
+        .capability-metric .val {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--citron);
+        }
+
+        .capability-metric .desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .screenshot-placeholder {
+            margin-top: 20px;
+            background: var(--navy-deep);
+            border: 1px dashed var(--navy-card-border);
+            padding: 40px;
+            text-align: center;
+            font-size: 13px;
+            color: var(--text-secondary);
+            letter-spacing: 1px;
+        }
+
+        /* ========================================
+           DECISION TABLE (Section 5)
+           ======================================== */
+        .decisions-grid {
+            margin-top: 48px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .decision-row {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 1px;
+            background: var(--navy-card-border);
+        }
+
+        .decision-choice {
+            background: var(--navy-card);
+            padding: 28px 32px;
+            display: flex;
+            align-items: center;
+        }
+
+        .decision-choice h4 {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .decision-rationale {
+            background: var(--navy-bg);
+            padding: 28px 32px;
+        }
+
+        .decision-rationale p {
+            font-size: 15px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* ========================================
+           CLIENT STORY CARDS (Section 6)
+           ======================================== */
+        .deployment-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            margin-top: 48px;
+        }
+
+        .deployment-card {
+            background: var(--navy-card);
+            border: 1px solid var(--navy-card-border);
+            overflow: hidden;
+            transition: border-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .deployment-card:hover {
+            border-color: var(--citron-border);
+            transform: translateY(-4px);
+        }
+
+        .deployment-header {
+            background: linear-gradient(135deg, rgba(229, 255, 0, 0.06), transparent);
+            padding: 32px;
+            border-bottom: 1px solid var(--navy-card-border);
+        }
+
+        .deployment-label {
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            color: var(--citron);
+            margin-bottom: 8px;
+        }
+
+        .deployment-company {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .deployment-body {
+            padding: 32px;
+        }
+
+        .deployment-body p {
+            font-size: 15px;
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+
+        .deployment-tag {
+            display: inline-block;
+            margin-top: 16px;
+            padding: 6px 14px;
+            background: var(--citron-dim);
+            border: 1px solid var(--citron-border);
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--citron);
+            letter-spacing: 0.5px;
+        }
+
+        /* ========================================
+           PIPELINE VISUAL (Section 7)
+           ======================================== */
+        .pipeline {
+            margin-top: 48px;
+            display: flex;
+            align-items: stretch;
+            gap: 0;
+            position: relative;
+        }
+
+        .pipeline-stage {
+            flex: 1;
+            padding: 28px 20px;
+            background: var(--navy-card);
+            border: 1px solid var(--navy-card-border);
+            text-align: center;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .pipeline-stage:hover {
+            background: var(--navy-card-hover);
+            border-color: var(--citron-border);
+        }
+
+        .pipeline-stage::after {
+            content: '→';
+            position: absolute;
+            right: -14px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 18px;
+            color: var(--citron);
+            z-index: 1;
+        }
+
+        .pipeline-stage:last-child::after {
+            display: none;
+        }
+
+        .pipeline-stage h4 {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        .pipeline-stage p {
+            font-size: 12px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .pipeline-checks {
+            margin-top: 32px;
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .pipeline-check {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .pipeline-check .check-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: rgba(46, 160, 67, 0.2);
+            color: #2ea043;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .pipeline-summary {
+            margin-top: 32px;
+            padding: 24px 32px;
+            background: var(--navy-card);
+            border-left: 3px solid var(--citron);
+            font-size: 15px;
+            color: var(--text-body);
+            line-height: 1.8;
+        }
+
+        /* ========================================
+           STATS GRID (Section 8)
+           ======================================== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1px;
+            background: var(--navy-card-border);
+            margin-top: 48px;
+        }
+
+        .stat-card {
+            background: var(--navy-card);
+            padding: 48px 32px;
+            text-align: center;
+            transition: background 0.3s ease;
+        }
+
+        .stat-card:hover {
+            background: var(--navy-card-hover);
+        }
+
+        .stat-value {
+            font-size: 48px;
+            font-weight: 800;
+            color: var(--citron);
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+
+        .stat-unit {
+            font-size: 16px;
+            font-weight: 400;
+            color: var(--citron);
+            opacity: 0.7;
+        }
+
+        .stat-desc {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-top: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        /* ========================================
+           FOOTER CTA (Section 9)
+           ======================================== */
+        .footer-cta {
+            text-align: center;
+            padding: var(--section-pad) 0;
+            position: relative;
+        }
+
+        .footer-cta::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--citron), transparent);
+            opacity: 0.4;
+        }
+
+        .footer-cta .section-headline {
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .footer-cta .section-body {
+            max-width: 540px;
+            margin-left: auto;
+            margin-right: auto;
+            margin-bottom: 40px;
+        }
+
+        .footer-ctas {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 64px;
+        }
+
+        .footer-meta {
+            padding-top: 40px;
+            border-top: 1px solid var(--navy-card-border);
+            text-align: center;
+        }
+
+        .footer-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .footer-tech {
+            font-size: 12px;
+            color: var(--text-secondary);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .footer-responsive {
+            margin-top: 16px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* ========================================
+           EXECUTIVE DASHBOARD (New Section)
+           ======================================== */
+        .exec-dashboard {
+            background: var(--navy-bg);
+            border: 1px solid var(--navy-card-border);
+            border-radius: 4px;
+            margin-top: 48px;
+            overflow: hidden;
+        }
+
+        .exec-dashboard-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 24px;
+            background: var(--navy-card);
+            border-bottom: 1px solid var(--navy-card-border);
+        }
+
+        .exec-dashboard-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #2ea043;
+            animation: pulse 2s ease infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(46, 160, 67, 0.4); }
+            50% { opacity: 0.8; box-shadow: 0 0 0 6px rgba(46, 160, 67, 0); }
+        }
+
+        .exec-dashboard-timestamp {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .exec-dashboard-body {
+            padding: 24px;
+        }
+
+        .exec-top-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .exec-kpi {
+            background: var(--navy-card);
+            border: 1px solid var(--navy-card-border);
+            padding: 20px;
+            border-radius: 4px;
+        }
+
+        .exec-kpi-label {
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .exec-kpi-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .exec-kpi-value .kpi-unit {
+            font-size: 14px;
+            font-weight: 400;
+            color: var(--text-secondary);
+        }
+
+        .exec-kpi-change {
+            margin-top: 6px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .exec-kpi-change.positive {
+            color: #2ea043;
+        }
+
+        .exec-kpi-change.neutral {
+            color: var(--citron);
+        }
+
+        .exec-bottom-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .exec-panel {
+            background: var(--navy-card);
+            border: 1px solid var(--navy-card-border);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .exec-panel-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--navy-card-border);
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+            letter-spacing: 0.5px;
+        }
+
+        .exec-panel-body {
+            padding: 20px;
+        }
+
+        .portfolio-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 0;
+            border-bottom: 1px solid rgba(42, 51, 72, 0.5);
+        }
+
+        .portfolio-row:last-child {
+            border-bottom: none;
+        }
+
+        .portfolio-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .portfolio-status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .portfolio-status-dot.healthy {
+            background: #2ea043;
+        }
+
+        .portfolio-status-dot.syncing {
+            background: var(--citron);
+            animation: pulse 2s ease infinite;
+        }
+
+        .portfolio-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .portfolio-meta {
+            text-align: right;
+        }
+
+        .portfolio-freshness {
+            font-size: 12px;
+            color: #2ea043;
+            font-weight: 500;
+        }
+
+        .portfolio-records {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+
+        .cost-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(42, 51, 72, 0.5);
+        }
+
+        .cost-row:last-child {
+            border-bottom: none;
+        }
+
+        .cost-category {
+            font-size: 13px;
+            color: var(--text-body);
+        }
+
+        .cost-bar-container {
+            flex: 1;
+            margin: 0 16px;
+            height: 6px;
+            background: var(--navy-deep);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .cost-bar {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 1.5s ease;
+        }
+
+        .cost-bar.storage { background: var(--citron); }
+        .cost-bar.compute { background: #58a6ff; }
+        .cost-bar.analytics { background: #bc8cff; }
+        .cost-bar.monitoring { background: #2ea043; }
+
+        .cost-amount {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+            min-width: 60px;
+            text-align: right;
+        }
+
+        .cost-total {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 12px;
+            margin-top: 8px;
+            border-top: 1px solid var(--navy-card-border);
+        }
+
+        .cost-total-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .cost-total-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--citron);
+        }
+
+        /* ========================================
+           BEHIND THE SCENES GALLERY
+           ======================================== */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-top: 48px;
+        }
+
+        .gallery-item {
+            background: var(--navy-card);
+            border: 1px solid var(--navy-card-border);
+            border-radius: 4px;
+            overflow: hidden;
+            transition: border-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .gallery-item:hover {
+            border-color: var(--citron-border);
+            transform: translateY(-4px);
+        }
+
+        .gallery-placeholder {
+            width: 100%;
+            aspect-ratio: 16/10;
+            background: var(--navy-deep);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            border-bottom: 1px solid var(--navy-card-border);
+        }
+
+        .gallery-placeholder-icon {
+            width: 32px;
+            height: 32px;
+            stroke: var(--text-secondary);
+            fill: none;
+            stroke-width: 1.5;
+            opacity: 0.5;
+        }
+
+        .gallery-placeholder-text {
+            font-size: 11px;
+            color: var(--text-secondary);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            text-align: center;
+            padding: 0 16px;
+        }
+
+        .gallery-caption {
+            padding: 16px;
+        }
+
+        .gallery-caption h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .gallery-caption p {
+            font-size: 12px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* ========================================
+           DATABASE CALLOUT
+           ======================================== */
+        .db-callout {
+            margin-top: 40px;
+            padding: 28px 32px;
+            background: var(--citron-dim);
+            border: 1px solid var(--citron-border);
+            border-radius: 4px;
+        }
+
+        .db-callout-title {
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--citron);
+            margin-bottom: 12px;
+        }
+
+        .db-callout-text {
+            font-size: 15px;
+            color: var(--text-body);
+            line-height: 1.7;
+        }
+
+        .db-tags {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+
+        .db-tag {
+            padding: 6px 14px;
+            background: rgba(229, 255, 0, 0.08);
+            border: 1px solid var(--citron-border);
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--citron);
+            letter-spacing: 0.5px;
+        }
+
+        /* ========================================
+           INTERACTIVE DATA CONSOLE
+           ======================================== */
+        .interactive-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-top: 40px;
+        }
+
+        .sql-console {
+            background: #0d1117;
+            border: 1px solid var(--navy-card-border);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .sql-tabs {
+            display: flex;
+            background: var(--navy-card);
+            border-bottom: 1px solid var(--navy-card-border);
+        }
+
+        .sql-tab {
+            padding: 10px 18px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s ease;
+            font-family: var(--font);
+            background: none;
+            border-top: none;
+            border-left: none;
+            border-right: none;
+            letter-spacing: 0.5px;
+        }
+
+        .sql-tab:hover {
+            color: var(--text-primary);
+        }
+
+        .sql-tab.active {
+            color: var(--citron);
+            border-bottom-color: var(--citron);
+        }
+
+        .sql-editor {
+            padding: 20px;
+            min-height: 200px;
+        }
+
+        .sql-editor pre {
+            margin: 0;
+            font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            color: var(--text-body);
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .sql-editor .keyword {
+            color: #ff7b72;
+        }
+
+        .sql-editor .string {
+            color: #a5d6ff;
+        }
+
+        .sql-editor .number {
+            color: var(--citron);
+        }
+
+        .sql-editor .comment {
+            color: #8b949e;
+            font-style: italic;
+        }
+
+        .sql-editor .table-name {
+            color: #d2a8ff;
+        }
+
+        .sql-editor .json-key {
+            color: #79c0ff;
+        }
+
+        .sql-input {
+            background: rgba(229, 255, 0, 0.08);
+            border: 1px solid var(--citron-border);
+            color: var(--citron);
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 13px;
+            padding: 2px 6px;
+            width: 100px;
+            border-radius: 2px;
+            text-align: right;
+        }
+
+        .sql-input:focus {
+            outline: none;
+            border-color: var(--citron);
+            box-shadow: 0 0 0 2px rgba(229, 255, 0, 0.15);
+        }
+
+        .sql-actions {
+            padding: 12px 20px;
+            border-top: 1px solid var(--navy-card-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .sql-execute {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 20px;
+            background: var(--citron);
+            color: var(--navy-deep);
+            font-family: var(--font);
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .sql-execute:hover {
+            background: var(--citron-hover);
+            transform: translateY(-1px);
+        }
+
+        .sql-execute:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .sql-output {
+            font-size: 12px;
+            font-family: 'SF Mono', monospace;
+            color: var(--text-secondary);
+        }
+
+        .sql-output.success {
+            color: #2ea043;
+        }
+
+        .sql-output.processing {
+            color: var(--citron);
+        }
+
+        /* Live Bar Chart */
+        .live-chart {
+            background: var(--navy-card);
+            border: 1px solid var(--navy-card-border);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .live-chart-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--navy-card-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .live-chart-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .live-chart-legend {
+            display: flex;
+            gap: 16px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        .legend-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 2px;
+        }
+
+        .legend-dot.revenue { background: var(--citron); }
+        .legend-dot.cogs { background: #58a6ff; }
+        .legend-dot.opex { background: #bc8cff; }
+
+        .live-chart-body {
+            padding: 24px 20px;
+        }
+
+        .chart-company {
+            margin-bottom: 24px;
+        }
+
+        .chart-company:last-child {
+            margin-bottom: 0;
+        }
+
+        .chart-company-name {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 10px;
+            letter-spacing: 0.5px;
+        }
+
+        .chart-bars {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .chart-bar-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chart-bar-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            width: 55px;
+            flex-shrink: 0;
+        }
+
+        .chart-bar-track {
+            flex: 1;
+            height: 18px;
+            background: var(--navy-deep);
+            border-radius: 2px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .chart-bar-fill {
+            height: 100%;
+            border-radius: 2px;
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        .chart-bar-fill.revenue { background: var(--citron); }
+        .chart-bar-fill.cogs { background: #58a6ff; }
+        .chart-bar-fill.opex { background: #bc8cff; }
+
+        .chart-bar-value {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-primary);
+            width: 60px;
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .chart-total-row {
+            margin-top: 12px;
+            padding-top: 10px;
+            border-top: 1px solid var(--navy-card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chart-total-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .chart-total-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--citron);
+        }
+
+        /* Processing Animation */
+        .processing-overlay {
+            display: none;
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(13, 17, 23, 0.85);
+            z-index: 10;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .processing-overlay.active {
+            display: flex;
+        }
+
+        .processing-spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid var(--navy-card-border);
+            border-top-color: var(--citron);
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .processing-text {
+            font-size: 13px;
+            color: var(--citron);
+            font-weight: 500;
+        }
+
+        /* ========================================
+           DATA FLOW ARCHITECTURE
+           ======================================== */
+        .data-flow {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            margin-top: 48px;
+            position: relative;
+            overflow-x: auto;
+            padding-bottom: 8px;
+        }
+
+        .flow-node {
+            flex: 0 0 auto;
+            background: var(--navy-card);
+            border: 1px solid var(--navy-card-border);
+            border-radius: 4px;
+            padding: 20px 16px;
+            text-align: center;
+            min-width: 130px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .flow-node:hover {
+            border-color: var(--citron-border);
+            transform: translateY(-4px);
+        }
+
+        .flow-node-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .flow-node h4 {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .flow-node p {
+            font-size: 10px;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        .flow-node-service {
+            display: block;
+            font-size: 9px;
+            color: var(--citron);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-top: 6px;
+            font-weight: 600;
+        }
+
+        .flow-arrow {
+            flex: 0 0 auto;
+            width: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--citron);
+            font-size: 16px;
+            opacity: 0.6;
+        }
+
+        .flow-arrow-animated {
+            animation: flowPulse 2s ease infinite;
+        }
+
+        @keyframes flowPulse {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 1; }
+        }
+
+        /* ========================================
+           ANIMATIONS
+           ======================================== */
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(24px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ========================================
+           SVG ICONS (Inline)
+           ======================================== */
+        .icon-svg {
+            width: 48px;
+            height: 48px;
+            stroke: var(--text-secondary);
+            fill: none;
+            stroke-width: 1.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        /* ========================================
+           RESPONSIVE
+           ======================================== */
+        @media (max-width: 968px) {
+            .pain-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .metrics-bar {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .capability-list {
+                grid-template-columns: 1fr;
+            }
+
+            .decision-row {
+                grid-template-columns: 1fr;
+            }
+
+            .deployment-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .pipeline {
+                flex-direction: column;
+            }
+
+            .pipeline-stage::after {
+                content: '↓';
+                right: auto;
+                left: 50%;
+                top: auto;
+                bottom: -14px;
+                transform: translateX(-50%);
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .exec-top-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .exec-bottom-row {
+                grid-template-columns: 1fr;
+            }
+
+            .gallery-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .interactive-section {
+                grid-template-columns: 1fr;
+            }
+
+            .data-flow {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 8px;
+            }
+
+            .flow-arrow {
+                width: 24px;
+            }
+
+            .live-chart-legend {
+                display: none;
+            }
+        }
+
+        @media (max-width: 640px) {
+            section {
+                padding: var(--section-pad-mobile) 0;
+            }
+
+            .container {
+                padding: 0 20px;
+            }
+
+            .metrics-bar {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-title {
+                letter-spacing: -1px;
+            }
+
+            .hero-ctas {
+                flex-direction: column;
+            }
+
+            .btn-primary, .btn-secondary {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .footer-ctas {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .pipeline-checks {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .capability-metrics {
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .exec-top-row {
+                grid-template-columns: 1fr;
+            }
+
+            .gallery-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .db-tags {
+                flex-direction: column;
+            }
+
+            .interactive-section {
+                grid-template-columns: 1fr;
+            }
+
+            .sql-input {
+                width: 80px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ================================
+         NAVIGATION
+         ================================ -->
+    <nav class="nav" id="navbar">
+        <div class="nav-inner">
+            <div class="nav-logo">APEX VAULT <span>·</span></div>
+            <ul class="nav-links">
+                <li><a href="#problem">The Problem</a></li>
+                <li><a href="#solution">Solution</a></li>
+                <li><a href="#executive-view">Executive View</a></li>
+                <li><a href="#capabilities">Capabilities</a></li>
+                <li><a href="#deployment">Deployment</a></li>
+                <li><a href="#metrics">Metrics</a></li>
+            </ul>
+            <a href="https://github.com/maxx1/pe-data-landing-zone" target="_blank" rel="noopener" class="nav-cta">View on GitHub</a>
+        </div>
+    </nav>
+
+    <!-- ================================
+         SECTION 1: HERO
+         ================================ -->
+    <section class="hero" id="hero">
+        <div class="hero-diagonal"></div>
+        <div class="container">
+            <div class="hero-content">
+                <span class="hero-label">Executive Briefing</span>
+                <h1 class="hero-title">Apex Vault</h1>
+                <p class="hero-parenthetical">(Portfolio Data Platform)</p>
+                <p class="hero-subtitle">Fragmented portfolio data costs PE firms millions in unrealized value. This platform eliminates the blind spots.</p>
+                <div class="hero-ctas">
+                    <a href="https://github.com/maxx1/pe-data-landing-zone" target="_blank" rel="noopener" class="btn-primary">
+                        Explore the Codebase
+                        <span>→</span>
+                    </a>
+                    <a href="#solution" class="btn-secondary">
+                        See the Architecture
+                        <span>↓</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="hero-gradient-line"></div>
+    </section>
+
+    <!-- ================================
+         SECTION 2: THE PROBLEM
+         ================================ -->
+    <section id="problem">
+        <div class="container">
+            <span class="section-label fade-in">The Problem</span>
+            <h2 class="section-headline fade-in">Businesses are drowning in data but thirsting for actionable insights.</h2>
+            <p class="section-body fade-in">Fragmented systems, inconsistent data, and outdated processes create chaos, leaving companies unable to see the big picture and identify value drivers. The result is missed opportunities, inefficiencies, and stalled growth.</p>
+
+            <div class="pain-grid fade-in">
+                <div class="pain-card">
+                    <svg class="icon-svg" viewBox="0 0 48 48">
+                        <rect x="4" y="8" width="16" height="32" rx="2"/>
+                        <rect x="28" y="8" width="16" height="32" rx="2"/>
+                        <line x1="20" y1="24" x2="28" y2="24" stroke-dasharray="4 3"/>
+                    </svg>
+                    <h3>Fragmented Systems, No Single Source of Truth</h3>
+                    <p>Revenue, cost, and operating data spread across ERPs, spreadsheets, and vendor systems. Deal teams lack the full picture to identify value drivers.</p>
+                </div>
+                <div class="pain-card">
+                    <svg class="icon-svg" viewBox="0 0 48 48">
+                        <path d="M8 36 L16 28 L24 32 L32 16 L40 20"/>
+                        <circle cx="16" cy="28" r="2"/>
+                        <circle cx="24" cy="32" r="2"/>
+                        <circle cx="32" cy="16" r="2"/>
+                        <circle cx="40" cy="20" r="2"/>
+                        <line x1="8" y1="40" x2="40" y2="40"/>
+                        <line x1="8" y1="8" x2="8" y2="40"/>
+                    </svg>
+                    <h3>Outdated Reporting Delays Decision Making</h3>
+                    <p>Month end close processes run on manual workflows and inconsistent data. CFOs wait weeks for insights that should be available in minutes.</p>
+                </div>
+                <div class="pain-card">
+                    <svg class="icon-svg" viewBox="0 0 48 48">
+                        <circle cx="24" cy="24" r="16"/>
+                        <path d="M24 14 L24 24 L32 28"/>
+                        <line x1="18" y1="6" x2="30" y2="6"/>
+                        <line x1="24" y1="2" x2="24" y2="6"/>
+                    </svg>
+                    <h3>Hidden Cost Levers Not Realizing Value</h3>
+                    <p>Cloud infrastructure spend spread across accounts with no visibility into allocation per portfolio company. Operating partners cannot see what they are paying for.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- ================================
+         SECTION 3: THE SOLUTION
+         ================================ -->
+    <section id="solution">
+        <div class="container">
+            <span class="section-label fade-in">What Apex Vault Delivers</span>
+            <h2 class="section-headline fade-in">Set up analytical infrastructure. Automate data integration. Build for real time insights.</h2>
+
+            <div class="metrics-bar fade-in">
+                <div class="metric-item">
+                    <div class="metric-value">50+</div>
+                    <div class="metric-label">Cloud Resources</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-value">2</div>
+                    <div class="metric-label">Portfolio Companies Live</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-value">206ms</div>
+                    <div class="metric-label">Data Processing</div>
+                </div>
+                <div class="metric-item">
+                    <div class="metric-value">$0</div>
+                    <div class="metric-label">Idle Cost</div>
+                </div>
+            </div>
+
+            <p class="section-body fade-in">Apex Vault is a production AWS data platform that ingests, validates, and partitions portfolio company financial data in real time. Security, cost governance, and executive observability are built in from day one. Not bolted on after the fact.</p>
+        </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- ================================
+         SECTION 3.5: EXECUTIVE VIEW (Interactive Dashboard)
+         ================================ -->
+    <section id="executive-view">
+        <div class="container">
+            <span class="section-label fade-in">Executive View</span>
+            <h2 class="section-headline fade-in">What your operating partners and CFOs actually see.</h2>
+            <p class="section-body fade-in">The core value of Apex Vault is not the infrastructure itself. It is the real time visibility it gives executives into portfolio company data health, pipeline performance, and cost allocation. This is a simulation of the operational dashboard.</p>
+
+            <div class="exec-dashboard fade-in">
+                <div class="exec-dashboard-header">
+                    <div class="exec-dashboard-title">
+                        <span class="live-dot"></span>
+                        Apex Vault Executive Dashboard
+                    </div>
+                    <div class="exec-dashboard-timestamp" id="dashboard-timestamp">Last updated: loading...</div>
+                </div>
+                <div class="exec-dashboard-body">
+                    <div class="exec-top-row">
+                        <div class="exec-kpi">
+                            <div class="exec-kpi-label">Portfolio Companies</div>
+                            <div class="exec-kpi-value">2 <span class="kpi-unit">active</span></div>
+                            <div class="exec-kpi-change positive">All pipelines healthy</div>
+                        </div>
+                        <div class="exec-kpi">
+                            <div class="exec-kpi-label">Data Processing</div>
+                            <div class="exec-kpi-value">206 <span class="kpi-unit">ms avg</span></div>
+                            <div class="exec-kpi-change positive">0 errors in production</div>
+                        </div>
+                        <div class="exec-kpi">
+                            <div class="exec-kpi-label">Monthly Cloud Cost</div>
+                            <div class="exec-kpi-value">$4.12 <span class="kpi-unit">/mo</span></div>
+                            <div class="exec-kpi-change neutral">$0 when idle</div>
+                        </div>
+                        <div class="exec-kpi">
+                            <div class="exec-kpi-label">Query Performance</div>
+                            <div class="exec-kpi-value">431 <span class="kpi-unit">ms</span></div>
+                            <div class="exec-kpi-change positive">SQL analytics ready</div>
+                        </div>
+                    </div>
+
+                    <div class="exec-bottom-row">
+                        <div class="exec-panel">
+                            <div class="exec-panel-header">Portfolio Company Data Health</div>
+                            <div class="exec-panel-body">
+                                <div class="portfolio-row">
+                                    <div class="portfolio-info">
+                                        <span class="portfolio-status-dot healthy"></span>
+                                        <span class="portfolio-name">Prestige Industrial Services</span>
+                                    </div>
+                                    <div class="portfolio-meta">
+                                        <div class="portfolio-freshness">Data current</div>
+                                        <div class="portfolio-records">3 datasets ingested</div>
+                                    </div>
+                                </div>
+                                <div class="portfolio-row">
+                                    <div class="portfolio-info">
+                                        <span class="portfolio-status-dot healthy"></span>
+                                        <span class="portfolio-name">Clearwater Health Partners</span>
+                                    </div>
+                                    <div class="portfolio-meta">
+                                        <div class="portfolio-freshness">Data current</div>
+                                        <div class="portfolio-records">2 datasets ingested</div>
+                                    </div>
+                                </div>
+                                <div class="portfolio-row">
+                                    <div class="portfolio-info">
+                                        <span class="portfolio-status-dot syncing"></span>
+                                        <span class="portfolio-name">Next Acquisition</span>
+                                    </div>
+                                    <div class="portfolio-meta">
+                                        <div class="portfolio-freshness" style="color: var(--citron)">Ready to onboard</div>
+                                        <div class="portfolio-records">27 lines of config</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="exec-panel">
+                            <div class="exec-panel-header">Cloud Cost Allocation</div>
+                            <div class="exec-panel-body">
+                                <div class="cost-row">
+                                    <span class="cost-category">Storage (S3)</span>
+                                    <div class="cost-bar-container">
+                                        <div class="cost-bar storage" style="width: 0%" data-width="45%"></div>
+                                    </div>
+                                    <span class="cost-amount">$1.85</span>
+                                </div>
+                                <div class="cost-row">
+                                    <span class="cost-category">Compute (Lambda)</span>
+                                    <div class="cost-bar-container">
+                                        <div class="cost-bar compute" style="width: 0%" data-width="25%"></div>
+                                    </div>
+                                    <span class="cost-amount">$1.03</span>
+                                </div>
+                                <div class="cost-row">
+                                    <span class="cost-category">Analytics (Athena)</span>
+                                    <div class="cost-bar-container">
+                                        <div class="cost-bar analytics" style="width: 0%" data-width="20%"></div>
+                                    </div>
+                                    <span class="cost-amount">$0.82</span>
+                                </div>
+                                <div class="cost-row">
+                                    <span class="cost-category">Monitoring (CW)</span>
+                                    <div class="cost-bar-container">
+                                        <div class="cost-bar monitoring" style="width: 0%" data-width="10%"></div>
+                                    </div>
+                                    <span class="cost-amount">$0.42</span>
+                                </div>
+                                <div class="cost-total">
+                                    <span class="cost-total-label">Total Monthly</span>
+                                    <span class="cost-total-value">$4.12</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interactive Data Console + Live Chart -->
+            <div class="interactive-section fade-in">
+                <div class="sql-console">
+                    <div class="sql-tabs">
+                        <button class="sql-tab active" onclick="switchTab('postgresql')">PostgreSQL</button>
+                        <button class="sql-tab" onclick="switchTab('snowflake')">Snowflake</button>
+                        <button class="sql-tab" onclick="switchTab('dynamodb')">DynamoDB</button>
+                    </div>
+                    <div class="sql-editor" id="sql-editor">
+                        <!-- Populated by JS -->
+                    </div>
+                    <div class="sql-actions">
+                        <button class="sql-execute" id="sql-execute-btn" onclick="executeQuery()">
+                            <span>▶</span> Execute Query
+                        </button>
+                        <span class="sql-output" id="sql-output">Ready</span>
+                    </div>
+                </div>
+
+                <div class="live-chart" style="position: relative;">
+                    <div class="processing-overlay" id="processing-overlay">
+                        <div class="processing-spinner"></div>
+                        <div class="processing-text">Processing via Lambda... 206ms</div>
+                    </div>
+                    <div class="live-chart-header">
+                        <span class="live-chart-title">Portfolio Financial Data (Real Time)</span>
+                        <div class="live-chart-legend">
+                            <div class="legend-item"><span class="legend-dot revenue"></span>Revenue</div>
+                            <div class="legend-item"><span class="legend-dot cogs"></span>COGS</div>
+                            <div class="legend-item"><span class="legend-dot opex"></span>OpEx</div>
+                        </div>
+                    </div>
+                    <div class="live-chart-body" id="live-chart-body">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- ================================
+         SECTION 4: PLATFORM CAPABILITIES
+         ================================ -->
+    <section id="capabilities">
+        <div class="container">
+            <span class="section-label fade-in">Platform Capabilities</span>
+            <h2 class="section-headline fade-in">Solutions powered by data and technology.</h2>
+
+            <div class="capability-list fade-in">
+                <!-- Capability 1 -->
+                <div>
+                    <div class="capability-bar" onclick="toggleCapability(this)">
+                        <span>Event Driven Data Ingestion</span>
+                        <span class="arrow">→</span>
+                    </div>
+                    <div class="capability-detail">
+                        <h4>Automated ingestion that validates financial data the moment it arrives</h4>
+                        <p>When portfolio companies upload financial data to the platform, a serverless processing engine triggers automatically. It validates schema integrity, sanitizes records, and partitions data by date into a governed data lake. No manual intervention. No batch windows. No delays.</p>
+                        <div class="capability-metrics">
+                            <div class="capability-metric">
+                                <span class="val">206ms</span>
+                                <span class="desc">processing latency</span>
+                            </div>
+                            <div class="capability-metric">
+                                <span class="val">0</span>
+                                <span class="desc">errors in production</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Capability 2 -->
+                <div>
+                    <div class="capability-bar" onclick="toggleCapability(this)">
+                        <span>Portfolio Company Isolation and Scaling</span>
+                        <span class="arrow">→</span>
+                    </div>
+                    <div class="capability-detail">
+                        <h4>One configuration per portfolio company, with full infrastructure isolation</h4>
+                        <p>Each portfolio company receives its own isolated data infrastructure with dedicated storage, access policies, encryption, and lifecycle governance. When the next acquisition closes, onboarding takes a configuration block, not a rebuild. All compliance policies are inherited automatically.</p>
+                        <div class="capability-metrics">
+                            <div class="capability-metric">
+                                <span class="val">27</span>
+                                <span class="desc">lines to onboard</span>
+                            </div>
+                            <div class="capability-metric">
+                                <span class="val">100%</span>
+                                <span class="desc">policy inheritance</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Capability 3 -->
+                <div>
+                    <div class="capability-bar" onclick="toggleCapability(this)">
+                        <span>Real Time Cost Governance</span>
+                        <span class="arrow">→</span>
+                    </div>
+                    <div class="capability-detail">
+                        <h4>Stakeholders see the dollar impact of every infrastructure change before it merges</h4>
+                        <p>Every pull request against the platform triggers an automated cost analysis. The exact monthly and annual dollar impact is posted directly to the code review before it can be approved. Operating partners and finance teams get visibility into cloud spend changes before they happen, not after the invoice arrives.</p>
+                        <div class="capability-metrics">
+                            <div class="capability-metric">
+                                <span class="val">$0</span>
+                                <span class="desc">surprise cloud costs</span>
+                            </div>
+                            <div class="capability-metric">
+                                <span class="val">100%</span>
+                                <span class="desc">pre merge visibility</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Capability 4 -->
+                <div>
+                    <div class="capability-bar" onclick="toggleCapability(this)">
+                        <span>Automated Security and Compliance</span>
+                        <span class="arrow">→</span>
+                    </div>
+                    <div class="capability-detail">
+                        <h4>Audit ready from day one with zero static credentials</h4>
+                        <p>The platform uses OIDC federation for all CI/CD authentication, eliminating long lived credentials entirely. Every storage layer is encrypted at rest (AES 256), enforces TLS only transport, and blocks all public access. Automated security scanning runs on every infrastructure change, catching misconfigurations before they reach production.</p>
+                        <div class="capability-metrics">
+                            <div class="capability-metric">
+                                <span class="val">0</span>
+                                <span class="desc">static credentials</span>
+                            </div>
+                            <div class="capability-metric">
+                                <span class="val">100%</span>
+                                <span class="desc">encrypted at rest</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Capability 5 -->
+                <div>
+                    <div class="capability-bar" onclick="toggleCapability(this)">
+                        <span>Executive Observability and Alerting</span>
+                        <span class="arrow">→</span>
+                    </div>
+                    <div class="capability-detail">
+                        <h4>Pipeline health visible to non technical stakeholders</h4>
+                        <p>A dedicated operational dashboard tracks data processing invocations, execution duration, error rates, and latency in real time. Automated alerts trigger when error thresholds are breached, notifying the team before issues impact downstream reporting.</p>
+                        <div class="capability-metrics">
+                            <div class="capability-metric">
+                                <span class="val">Live</span>
+                                <span class="desc">operational dashboard</span>
+                            </div>
+                            <div class="capability-metric">
+                                <span class="val">Dual</span>
+                                <span class="desc">automated alert policies</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Capability 6 -->
+                <div>
+                    <div class="capability-bar" onclick="toggleCapability(this)">
+                        <span>Serverless SQL Analytics</span>
+                        <span class="arrow">→</span>
+                    </div>
+                    <div class="capability-detail">
+                        <h4>Financial analysts query portfolio data without managing databases</h4>
+                        <p>A data catalog maps the processed data lake to standard SQL tables. Financial analysts and BI tools like Power BI, Tableau, and Looker can run complex aggregations across portfolio company data in milliseconds. No database clusters to provision. No servers to manage. No idle compute costs.</p>
+                        <div class="capability-metrics">
+                            <div class="capability-metric">
+                                <span class="val">431ms</span>
+                                <span class="desc">query execution</span>
+                            </div>
+                            <div class="capability-metric">
+                                <span class="val">$0</span>
+                                <span class="desc">database costs</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- ================================
+         SECTION 5: STRATEGIC DECISIONS
+         ================================ -->
+    <section id="decisions">
+        <div class="container">
+            <span class="section-label fade-in">Strategic Decisions</span>
+            <h2 class="section-headline fade-in">Every technology choice maps to a business outcome.</h2>
+
+            <div class="decisions-grid fade-in">
+                <div class="decision-row">
+                    <div class="decision-choice">
+                        <h4>Terraform over CloudFormation</h4>
+                    </div>
+                    <div class="decision-rationale">
+                        <p>Enterprise data platforms require infrastructure as code using Terraform across AWS and Azure. Terraform provides the cloud agnostic foundation PE firms need when portfolio companies span multiple providers.</p>
+                    </div>
+                </div>
+
+                <div class="decision-row">
+                    <div class="decision-choice">
+                        <h4>Serverless over Provisioned Compute</h4>
+                    </div>
+                    <div class="decision-rationale">
+                        <p>Portfolio data arrives in bursts. Serverless means you pay only when data moves. Near zero idle cost is the kind of efficiency PE backed CFOs expect from their data infrastructure.</p>
+                    </div>
+                </div>
+
+                <div class="decision-row">
+                    <div class="decision-choice">
+                        <h4>OIDC Federation over Static Credentials</h4>
+                    </div>
+                    <div class="decision-rationale">
+                        <p>The role requires collaborating with security teams to harden cloud services. OIDC eliminates long lived credentials entirely, making the platform audit ready from day one for financial data.</p>
+                    </div>
+                </div>
+
+                <div class="decision-row">
+                    <div class="decision-choice">
+                        <h4>Reusable Modules over Copy Paste</h4>
+                    </div>
+                    <div class="decision-rationale">
+                        <p>Institutional scalability. Onboard the next acquisition by adding a configuration block, not rebuilding infrastructure from scratch. Every portfolio company inherits the same security and compliance baseline.</p>
+                    </div>
+                </div>
+
+                <div class="decision-row">
+                    <div class="decision-choice">
+                        <h4>GitHub Actions over Manual Workflows</h4>
+                    </div>
+                    <div class="decision-rationale">
+                        <p>The role requires building and managing CI/CD workflows using GitHub Actions. Every infrastructure change is peer reviewed, version controlled, and fully traceable with a complete audit trail.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Database Experience Callout -->
+            <div class="db-callout fade-in">
+                <div class="db-callout-title">Database and Data Platform Experience</div>
+                <p class="db-callout-text">The current implementation uses serverless Athena and Glue for SQL analytics over the S3 data lake. The architecture is designed to integrate with enterprise database platforms as portfolio companies scale their analytical maturity. This includes relational databases for structured financial reporting, cloud data warehouses for cross portfolio analytics, and document stores for unstructured operational data.</p>
+                <div class="db-tags">
+                    <span class="db-tag">PostgreSQL</span>
+                    <span class="db-tag">Snowflake</span>
+                    <span class="db-tag">NoSQL (DynamoDB)</span>
+                    <span class="db-tag">AWS Glue</span>
+                    <span class="db-tag">Amazon Athena</span>
+                    <span class="db-tag">S3 Data Lake</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- ================================
+         SECTION 5.5: BEHIND THE SCENES
+         ================================ -->
+    <section id="behind-the-scenes">
+        <div class="container">
+            <span class="section-label fade-in">Behind the Scenes</span>
+            <h2 class="section-headline fade-in">The build process, step by step.</h2>
+            <p class="section-body fade-in">These are screenshots from the actual development and deployment of Apex Vault. Every resource, every pipeline, every dashboard shown here is live in production on AWS.</p>
+
+            <div class="gallery-grid fade-in">
+                <div class="gallery-item">
+                    <div class="gallery-placeholder">
+                        <svg class="gallery-placeholder-icon" viewBox="0 0 32 32"><rect x="2" y="4" width="28" height="24" rx="2"/><circle cx="16" cy="16" r="4"/></svg>
+                        <span class="gallery-placeholder-text">Screenshot: GitHub Actions</span>
+                    </div>
+                    <div class="gallery-caption">
+                        <h4>CI/CD Pipeline with All Checks Green</h4>
+                        <p>GitHub Actions workflow showing security scan, cost analysis, and Terraform plan all passing on a production pull request.</p>
+                    </div>
+                </div>
+
+                <div class="gallery-item">
+                    <div class="gallery-placeholder">
+                        <svg class="gallery-placeholder-icon" viewBox="0 0 32 32"><rect x="2" y="4" width="28" height="24" rx="2"/><circle cx="16" cy="16" r="4"/></svg>
+                        <span class="gallery-placeholder-text">Screenshot: Terraform Plan</span>
+                    </div>
+                    <div class="gallery-caption">
+                        <h4>Terraform Plan Output</h4>
+                        <p>Infrastructure plan showing 50+ resources being created across S3, Lambda, Glue, Athena, CloudWatch, and IAM.</p>
+                    </div>
+                </div>
+
+                <div class="gallery-item">
+                    <div class="gallery-placeholder">
+                        <svg class="gallery-placeholder-icon" viewBox="0 0 32 32"><rect x="2" y="4" width="28" height="24" rx="2"/><circle cx="16" cy="16" r="4"/></svg>
+                        <span class="gallery-placeholder-text">Screenshot: CloudWatch Dashboard</span>
+                    </div>
+                    <div class="gallery-caption">
+                        <h4>CloudWatch Executive Dashboard</h4>
+                        <p>Live operational dashboard tracking invocations, error rates, processing duration, and pipeline health in real time.</p>
+                    </div>
+                </div>
+
+                <div class="gallery-item">
+                    <div class="gallery-placeholder">
+                        <svg class="gallery-placeholder-icon" viewBox="0 0 32 32"><rect x="2" y="4" width="28" height="24" rx="2"/><circle cx="16" cy="16" r="4"/></svg>
+                        <span class="gallery-placeholder-text">Screenshot: S3 Console</span>
+                    </div>
+                    <div class="gallery-caption">
+                        <h4>S3 Data Lake with Partitioned Data</h4>
+                        <p>AWS Console showing the dual bucket architecture with raw and processed data partitioned by date for fast downstream analytics.</p>
+                    </div>
+                </div>
+
+                <div class="gallery-item">
+                    <div class="gallery-placeholder">
+                        <svg class="gallery-placeholder-icon" viewBox="0 0 32 32"><rect x="2" y="4" width="28" height="24" rx="2"/><circle cx="16" cy="16" r="4"/></svg>
+                        <span class="gallery-placeholder-text">Screenshot: Terraform Code</span>
+                    </div>
+                    <div class="gallery-caption">
+                        <h4>Infrastructure as Code</h4>
+                        <p>Modular Terraform code showing the reusable S3 module that enables onboarding new portfolio companies in 27 lines of configuration.</p>
+                    </div>
+                </div>
+
+                <div class="gallery-item">
+                    <div class="gallery-placeholder">
+                        <svg class="gallery-placeholder-icon" viewBox="0 0 32 32"><rect x="2" y="4" width="28" height="24" rx="2"/><circle cx="16" cy="16" r="4"/></svg>
+                        <span class="gallery-placeholder-text">Screenshot: Architecture Diagram</span>
+                    </div>
+                    <div class="gallery-caption">
+                        <h4>End to End Architecture</h4>
+                        <p>Full pipeline diagram from data ingestion through Lambda processing, S3 partitioning, Glue cataloging, and Athena analytics.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- ================================
+         SECTION 6: LIVE DEPLOYMENT
+         ================================ -->
+    <section id="deployment">
+        <div class="container">
+            <span class="section-label fade-in">Live Deployment</span>
+            <h2 class="section-headline fade-in">This is not a prototype. It is running in production.</h2>
+
+            <div class="deployment-grid fade-in">
+                <div class="deployment-card">
+                    <div class="deployment-header">
+                        <div class="deployment-label">Portfolio Company</div>
+                        <div class="deployment-company">Prestige Industrial Services</div>
+                    </div>
+                    <div class="deployment-body">
+                        <p>A mid market industrial services provider with $340M in revenue across three regional divisions. Financial reporting data arrives as quarterly uploads covering revenue, cost of goods sold, and operating expenses across each division. Apex Vault ingests, validates, and partitions this data into a governed data lake, making it queryable by analysts within seconds of upload.</p>
+                        <span class="deployment-tag">Live on AWS us-east-2</span>
+                    </div>
+                </div>
+
+                <div class="deployment-card">
+                    <div class="deployment-header">
+                        <div class="deployment-label">Portfolio Company</div>
+                        <div class="deployment-company">Clearwater Health Partners</div>
+                    </div>
+                    <div class="deployment-body">
+                        <p>A PE backed healthcare staffing firm with $120M in revenue preparing for a growth phase through acquisition. Added to the platform using the same reusable infrastructure module, automatically inheriting encryption policies, access controls, cost governance, and monitoring. Zero incremental engineering effort. Zero configuration drift.</p>
+                        <span class="deployment-tag">Onboarded via reusable module</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- ================================
+         SECTION 7: DELIVERY MODEL
+         ================================ -->
+    <section id="delivery">
+        <div class="container">
+            <span class="section-label fade-in">Delivery Model</span>
+            <h2 class="section-headline fade-in">Fully automated infrastructure delivery. Complete audit trail.</h2>
+            <p class="section-body fade-in">This is how data moves through Apex Vault, from the moment a portfolio company uploads financial records to the moment executives can query it.</p>
+
+            <!-- Visual Data Flow Architecture -->
+            <div class="data-flow fade-in">
+                <div class="flow-node">
+                    <div class="flow-node-icon">📄</div>
+                    <h4>CSV Upload</h4>
+                    <p>Portfolio company uploads financial data</p>
+                    <span class="flow-node-service">S3 Raw Bucket</span>
+                </div>
+                <div class="flow-arrow flow-arrow-animated">→</div>
+                <div class="flow-node">
+                    <div class="flow-node-icon">⚡</div>
+                    <h4>Validate + Process</h4>
+                    <p>Schema validation, sanitization, partitioning</p>
+                    <span class="flow-node-service">Lambda 206ms</span>
+                </div>
+                <div class="flow-arrow flow-arrow-animated">→</div>
+                <div class="flow-node">
+                    <div class="flow-node-icon">🗄️</div>
+                    <h4>Governed Data Lake</h4>
+                    <p>Partitioned by date, encrypted, lifecycle managed</p>
+                    <span class="flow-node-service">S3 Processed</span>
+                </div>
+                <div class="flow-arrow flow-arrow-animated">→</div>
+                <div class="flow-node">
+                    <div class="flow-node-icon">📊</div>
+                    <h4>Data Catalog</h4>
+                    <p>Maps S3 to SQL tables automatically</p>
+                    <span class="flow-node-service">AWS Glue</span>
+                </div>
+                <div class="flow-arrow flow-arrow-animated">→</div>
+                <div class="flow-node">
+                    <div class="flow-node-icon">🔍</div>
+                    <h4>SQL Analytics</h4>
+                    <p>Analysts query financials in 431ms</p>
+                    <span class="flow-node-service">Athena</span>
+                </div>
+                <div class="flow-arrow flow-arrow-animated">→</div>
+                <div class="flow-node">
+                    <div class="flow-node-icon">📈</div>
+                    <h4>Executive Dashboard</h4>
+                    <p>Real time health, costs, and KPIs</p>
+                    <span class="flow-node-service">CloudWatch</span>
+                </div>
+            </div>
+
+            <!-- CI/CD Pipeline -->
+            <div style="margin-top: 48px;">
+                <span class="section-label fade-in" style="margin-bottom: 24px;">Infrastructure Delivery Pipeline</span>
+            </div>
+
+            <div class="pipeline fade-in">
+                <div class="pipeline-stage">
+                    <h4>Feature Branch</h4>
+                    <p>Engineer creates infrastructure change</p>
+                </div>
+                <div class="pipeline-stage">
+                    <h4>PR Quality Gates</h4>
+                    <p>Security, cost, and plan analysis</p>
+                </div>
+                <div class="pipeline-stage">
+                    <h4>Peer Review</h4>
+                    <p>Team approval required</p>
+                </div>
+                <div class="pipeline-stage">
+                    <h4>Production Deploy</h4>
+                    <p>Automated via GitHub Actions</p>
+                </div>
+            </div>
+
+            <div class="pipeline-checks fade-in">
+                <div class="pipeline-check">
+                    <span class="check-icon">✓</span>
+                    <span>Security Scan (tfsec)</span>
+                </div>
+                <div class="pipeline-check">
+                    <span class="check-icon">✓</span>
+                    <span>Cost Analysis (Infracost)</span>
+                </div>
+                <div class="pipeline-check">
+                    <span class="check-icon">✓</span>
+                    <span>Infrastructure Plan (Terraform)</span>
+                </div>
+            </div>
+
+            <div class="pipeline-summary fade-in">
+                Every change to financial data infrastructure is peer reviewed, security scanned, cost analyzed, and auto deployed. No manual intervention. No SSH access. No risk of configuration drift.
+            </div>
+        </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- ================================
+         SECTION 8: LIVE METRICS
+         ================================ -->
+    <section id="metrics">
+        <div class="container">
+            <span class="section-label fade-in">Live Metrics</span>
+            <h2 class="section-headline fade-in">Measured. Verified. Audit ready.</h2>
+
+            <div class="stats-grid fade-in">
+                <div class="stat-card">
+                    <div class="stat-value">206.3<span class="stat-unit">ms</span></div>
+                    <div class="stat-desc">Data processing latency</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">431<span class="stat-unit">ms</span></div>
+                    <div class="stat-desc">SQL query execution</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">0</div>
+                    <div class="stat-desc">Production pipeline errors</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">100<span class="stat-unit">%</span></div>
+                    <div class="stat-desc">CI/CD gate pass rate</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">1:34</div>
+                    <div class="stat-desc">Full deployment time</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">27<span class="stat-unit"> lines</span></div>
+                    <div class="stat-desc">Code to onboard a new company</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- ================================
+         SECTION 9: FOOTER CTA
+         ================================ -->
+    <section class="footer-cta" id="cta">
+        <div class="container">
+            <span class="section-label fade-in">Open Source</span>
+            <h2 class="section-headline fade-in">The platform is live. The codebase is open.</h2>
+            <p class="section-body fade-in">Every line of infrastructure code, every architecture decision, every CI/CD workflow is available for review.</p>
+
+            <div class="footer-ctas fade-in">
+                <a href="https://github.com/maxx1/pe-data-landing-zone" target="_blank" rel="noopener" class="btn-primary">
+                    Explore on GitHub
+                    <span>→</span>
+                </a>
+                <a href="https://github.com/maxx1/pe-data-landing-zone/tree/main/docs" target="_blank" rel="noopener" class="btn-secondary">
+                    View Technical Documentation
+                    <span>→</span>
+                </a>
+            </div>
+
+            <div class="footer-meta fade-in">
+                <div class="footer-name">Built by Jeremi D Wright</div>
+                <div class="footer-tech">Terraform · AWS · GitHub Actions</div>
+                <div class="footer-responsive">Responsive design for desktop and mobile</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================================
+         SCRIPTS
+         ================================ -->
+    <script>
+        // Capability bar toggle
+        function toggleCapability(bar) {
+            const detail = bar.nextElementSibling;
+            const isActive = bar.classList.contains('active');
+
+            // Close all others
+            document.querySelectorAll('.capability-bar').forEach(b => {
+                b.classList.remove('active');
+                b.nextElementSibling.classList.remove('active');
+            });
+
+            // Toggle this one
+            if (!isActive) {
+                bar.classList.add('active');
+                detail.classList.add('active');
+            }
+        }
+
+        // Intersection Observer for fade-in animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -40px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Navbar scroll effect
+        let lastScroll = 0;
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            const currentScroll = window.pageYOffset;
+
+            if (currentScroll > 100) {
+                navbar.style.background = 'rgba(13, 17, 23, 0.95)';
+            } else {
+                navbar.style.background = 'rgba(13, 17, 23, 0.85)';
+            }
+
+            lastScroll = currentScroll;
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+
+    <script>
+        // ========================================
+        // INTERACTIVE DATA ENGINE
+        // ========================================
+
+        // Dashboard live timestamp
+        function updateTimestamp() {
+            const el = document.getElementById('dashboard-timestamp');
+            if (el) {
+                const now = new Date();
+                const options = { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+                el.textContent = 'Last updated: ' + now.toLocaleDateString('en-US', options);
+            }
+        }
+        updateTimestamp();
+        setInterval(updateTimestamp, 1000);
+
+        // Animate cost bars when dashboard scrolls into view
+        const dashboardObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    document.querySelectorAll('.cost-bar').forEach(bar => {
+                        const targetWidth = bar.getAttribute('data-width');
+                        if (targetWidth) {
+                            setTimeout(() => {
+                                bar.style.width = targetWidth;
+                            }, 300);
+                        }
+                    });
+                    dashboardObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.3 });
+
+        const dashboard = document.querySelector('.exec-dashboard');
+        if (dashboard) {
+            dashboardObserver.observe(dashboard);
+        }
+
+        // ========================================
+        // PORTFOLIO DATA STATE
+        // ========================================
+        const portfolioData = {
+            'Prestige Industrial': { revenue: 34.2, cogs: 21.1, opex: 8.4, records: 3 },
+            'Clearwater Health': { revenue: 12.0, cogs: 7.2, opex: 3.1, records: 2 }
+        };
+
+        let currentTab = 'postgresql';
+        let queryCount = 0;
+
+        // ========================================
+        // SQL TAB TEMPLATES
+        // ========================================
+        function getSQL(tab) {
+            if (tab === 'postgresql') {
+                return `<pre><span class="comment">-- Insert financial data for a portfolio company</span>
+<span class="keyword">INSERT INTO</span> <span class="table-name">financial_records</span>
+  (company, quarter, revenue, cogs, opex)
+<span class="keyword">VALUES</span> (
+  <span class="string">'Prestige Industrial'</span>,
+  <span class="string">'Q3 2026'</span>,
+  <input class="sql-input" id="input-revenue" type="number" value="34200000" step="1000000">,
+  <input class="sql-input" id="input-cogs" type="number" value="21100000" step="1000000">,
+  <input class="sql-input" id="input-opex" type="number" value="8400000" step="1000000">
+);</pre>`;
+            } else if (tab === 'snowflake') {
+                return `<pre><span class="comment">-- Snowflake: Insert into data warehouse</span>
+<span class="keyword">INSERT INTO</span> <span class="table-name">APEX_VAULT.FINANCIAL.RECORDS</span>
+  (COMPANY, QUARTER, REVENUE, COGS, OPEX)
+<span class="keyword">VALUES</span> (
+  <span class="string">'Prestige Industrial'</span>,
+  <span class="string">'Q3 2026'</span>,
+  <input class="sql-input" id="input-revenue" type="number" value="34200000" step="1000000">,
+  <input class="sql-input" id="input-cogs" type="number" value="21100000" step="1000000">,
+  <input class="sql-input" id="input-opex" type="number" value="8400000" step="1000000">
+);</pre>`;
+            } else {
+                return `<pre><span class="comment">// DynamoDB: PutItem for portfolio company</span>
+{
+  <span class="json-key">"TableName"</span>: <span class="string">"apex-vault-financial"</span>,
+  <span class="json-key">"Item"</span>: {
+    <span class="json-key">"PK"</span>: <span class="string">"COMPANY#prestige-industrial"</span>,
+    <span class="json-key">"SK"</span>: <span class="string">"QUARTER#2026-Q3"</span>,
+    <span class="json-key">"revenue"</span>: <input class="sql-input" id="input-revenue" type="number" value="34200000" step="1000000">,
+    <span class="json-key">"cogs"</span>: <input class="sql-input" id="input-cogs" type="number" value="21100000" step="1000000">,
+    <span class="json-key">"opex"</span>: <input class="sql-input" id="input-opex" type="number" value="8400000" step="1000000">
+  }
+}</pre>`;
+            }
+        }
+
+        function switchTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.sql-tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById('sql-editor').innerHTML = getSQL(tab);
+            document.getElementById('sql-output').textContent = 'Ready';
+            document.getElementById('sql-output').className = 'sql-output';
+        }
+
+        // ========================================
+        // CHART RENDERING
+        // ========================================
+        const maxVal = 50; // $50M max for bar scale
+
+        function formatM(val) {
+            return '$' + val.toFixed(1) + 'M';
+        }
+
+        function renderChart() {
+            const chartBody = document.getElementById('live-chart-body');
+            let totalRevenue = 0;
+            let html = '';
+
+            Object.entries(portfolioData).forEach(([name, data]) => {
+                totalRevenue += data.revenue;
+                html += `
+                    <div class="chart-company">
+                        <div class="chart-company-name">${name}</div>
+                        <div class="chart-bars">
+                            <div class="chart-bar-row">
+                                <span class="chart-bar-label">Revenue</span>
+                                <div class="chart-bar-track">
+                                    <div class="chart-bar-fill revenue" style="width: ${(data.revenue / maxVal * 100)}%"></div>
+                                </div>
+                                <span class="chart-bar-value">${formatM(data.revenue)}</span>
+                            </div>
+                            <div class="chart-bar-row">
+                                <span class="chart-bar-label">COGS</span>
+                                <div class="chart-bar-track">
+                                    <div class="chart-bar-fill cogs" style="width: ${(data.cogs / maxVal * 100)}%"></div>
+                                </div>
+                                <span class="chart-bar-value">${formatM(data.cogs)}</span>
+                            </div>
+                            <div class="chart-bar-row">
+                                <span class="chart-bar-label">OpEx</span>
+                                <div class="chart-bar-track">
+                                    <div class="chart-bar-fill opex" style="width: ${(data.opex / maxVal * 100)}%"></div>
+                                </div>
+                                <span class="chart-bar-value">${formatM(data.opex)}</span>
+                            </div>
+                        </div>
+                    </div>`;
+            });
+
+            html += `
+                <div class="chart-total-row">
+                    <span class="chart-total-label">Total Portfolio Revenue</span>
+                    <span class="chart-total-value">${formatM(totalRevenue)}</span>
+                </div>`;
+
+            chartBody.innerHTML = html;
+        }
+
+        // ========================================
+        // EXECUTE QUERY (Interactive Demo)
+        // ========================================
+        function executeQuery() {
+            const btn = document.getElementById('sql-execute-btn');
+            const output = document.getElementById('sql-output');
+            const overlay = document.getElementById('processing-overlay');
+
+            const revenueInput = document.getElementById('input-revenue');
+            const cogsInput = document.getElementById('input-cogs');
+            const opexInput = document.getElementById('input-opex');
+
+            if (!revenueInput || !cogsInput || !opexInput) return;
+
+            const revenue = parseFloat(revenueInput.value) / 1000000;
+            const cogs = parseFloat(cogsInput.value) / 1000000;
+            const opex = parseFloat(opexInput.value) / 1000000;
+
+            // Disable button
+            btn.disabled = true;
+            output.textContent = 'Processing...';
+            output.className = 'sql-output processing';
+
+            // Show processing overlay on chart
+            overlay.classList.add('active');
+
+            // Simulate Lambda processing time (206ms)
+            setTimeout(() => {
+                // Update portfolio data
+                portfolioData['Prestige Industrial'] = {
+                    revenue: revenue,
+                    cogs: cogs,
+                    opex: opex,
+                    records: portfolioData['Prestige Industrial'].records + 1
+                };
+
+                queryCount++;
+
+                // Hide processing overlay
+                overlay.classList.remove('active');
+
+                // Re-render chart with animation
+                renderChart();
+
+                // Update KPI cards
+                const recordsEl = document.querySelector('.portfolio-row:first-child .portfolio-records');
+                if (recordsEl) {
+                    recordsEl.textContent = portfolioData['Prestige Industrial'].records + ' datasets ingested';
+                }
+
+                const processingEl = document.querySelector('.portfolio-row:first-child .portfolio-freshness');
+                if (processingEl) {
+                    processingEl.textContent = 'Updated just now';
+                }
+
+                // Success output
+                output.textContent = '1 row inserted. Processing: 206ms. Query #' + queryCount;
+                output.className = 'sql-output success';
+                btn.disabled = false;
+
+            }, 800); // Slightly longer than real 206ms for visual effect
+        }
+
+        // Initialize
+        document.getElementById('sql-editor').innerHTML = getSQL('postgresql');
+        renderChart();
+    </script>
+
+</body>
+</html>

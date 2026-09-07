@@ -51,14 +51,14 @@ resource "aws_s3_bucket_notification" "raw_data_trigger" {
   depends_on = [aws_lambda_permission.allow_s3_invoke]
 }
 
-# ─── BAKER LOGISTICS (Portfolio Company #2) ──────────────────────────────
-# Demonstrates multi-tenant scalability: Onboarding a new acquisition 
-# takes only 2 module calls instead of rewriting infrastructure.
+# ─── CLEARWATER HEALTH PARTNERS (Portfolio Company #2) ────────────────────
+# PE-backed healthcare staffing firm. Demonstrates multi-tenant scalability:
+# onboarding a new acquisition takes only 2 module calls.
 
-module "baker_raw_data_bucket" {
+module "clearwater_raw_data_bucket" {
   source = "./modules/s3-bucket"
 
-  bucket_name        = "${var.project_name}-baker-logistics-raw-${data.aws_caller_identity.current.account_id}"
+  bucket_name        = "${var.project_name}-clearwater-health-raw-${data.aws_caller_identity.current.account_id}"
   purpose            = "raw-data-ingestion"
   versioning_enabled = true
   enable_lifecycle   = true
@@ -66,10 +66,63 @@ module "baker_raw_data_bucket" {
   force_destroy      = true
 }
 
-module "baker_processed_data_bucket" {
+module "clearwater_processed_data_bucket" {
   source = "./modules/s3-bucket"
 
-  bucket_name        = "${var.project_name}-baker-logistics-processed-${data.aws_caller_identity.current.account_id}"
+  bucket_name        = "${var.project_name}-clearwater-health-processed-${data.aws_caller_identity.current.account_id}"
+  purpose            = "processed-data-warehouse"
+  versioning_enabled = true
+  enable_lifecycle   = true
+  expiration_days    = 365
+  force_destroy      = true
+}
+
+# ─── SUMMIT RIDGE LOGISTICS (Portfolio Company #3) ────────────────────────
+# Supply chain / 3PL company. Operational tracking data flows through
+# DynamoDB for real-time shipment metrics alongside S3 for batch financials.
+
+module "summit_ridge_raw_data_bucket" {
+  source = "./modules/s3-bucket"
+
+  bucket_name        = "${var.project_name}-summit-ridge-raw-${data.aws_caller_identity.current.account_id}"
+  purpose            = "raw-data-ingestion"
+  versioning_enabled = true
+  enable_lifecycle   = true
+  expiration_days    = 90
+  force_destroy      = true
+}
+
+module "summit_ridge_processed_data_bucket" {
+  source = "./modules/s3-bucket"
+
+  bucket_name        = "${var.project_name}-summit-ridge-processed-${data.aws_caller_identity.current.account_id}"
+  purpose            = "processed-data-warehouse"
+  versioning_enabled = true
+  enable_lifecycle   = true
+  expiration_days    = 365
+  force_destroy      = true
+}
+
+# ─── MERIDIAN CAPITAL ADVISORS (Portfolio Company #4) ─────────────────────
+# Financial advisory firm. Data schema designed for direct loading into
+# Snowflake or PostgreSQL as the company scales its analytical maturity.
+# S3 serves as the Snowflake-ready staging layer.
+
+module "meridian_raw_data_bucket" {
+  source = "./modules/s3-bucket"
+
+  bucket_name        = "${var.project_name}-meridian-capital-raw-${data.aws_caller_identity.current.account_id}"
+  purpose            = "raw-data-ingestion"
+  versioning_enabled = true
+  enable_lifecycle   = true
+  expiration_days    = 90
+  force_destroy      = true
+}
+
+module "meridian_processed_data_bucket" {
+  source = "./modules/s3-bucket"
+
+  bucket_name        = "${var.project_name}-meridian-capital-processed-${data.aws_caller_identity.current.account_id}"
   purpose            = "processed-data-warehouse"
   versioning_enabled = true
   enable_lifecycle   = true

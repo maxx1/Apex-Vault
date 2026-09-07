@@ -99,3 +99,58 @@ resource "aws_athena_workgroup" "analytics" {
     Name = "${var.project_name}-analytics-workgroup"
   }
 }
+
+# --- AWS Glue Data Catalog Table (Operational / Supply Chain Data) ---
+# Summit Ridge Logistics: shipment tracking and supply chain KPIs
+# queryable via the same Athena workgroup as financial data
+resource "aws_glue_catalog_table" "operational_data" {
+  name          = "operational_records"
+  database_name = aws_glue_catalog_database.financial_db.name
+  table_type    = "EXTERNAL_TABLE"
+
+  parameters = {
+    "classification"         = "csv"
+    "skip.header.line.count" = "1"
+  }
+
+  storage_descriptor {
+    location      = "s3://${module.summit_ridge_processed_data_bucket.bucket_id}/processed/"
+    input_format  = "org.apache.hadoop.mapred.TextInputFormat"
+    output_format = "org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat"
+
+    ser_de_info {
+      name                  = "csv-serde"
+      serialization_library = "org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe"
+      parameters = {
+        "field.delim"          = ","
+        "serialization.format" = ","
+      }
+    }
+
+    columns {
+      name = "shipment_id"
+      type = "string"
+    }
+    columns {
+      name = "origin"
+      type = "string"
+    }
+    columns {
+      name = "destination"
+      type = "string"
+    }
+    columns {
+      name = "cost_per_unit"
+      type = "double"
+    }
+    columns {
+      name = "on_time_rate"
+      type = "double"
+    }
+    columns {
+      name = "reporting_period"
+      type = "string"
+    }
+  }
+}
+

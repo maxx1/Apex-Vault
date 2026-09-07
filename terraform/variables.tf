@@ -32,7 +32,7 @@ variable "aws_region" {
 variable "client_name" {
   description = "Name of the portfolio company (for tagging and bucket naming)"
   type        = string
-  default     = "acme-manufacturing"
+  default     = "prestige-industrial"
 }
 
 variable "alert_email" {

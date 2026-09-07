@@ -1,0 +1,2585 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apex Vault | Portfolio Data Platform</title>
+    <meta name="description"
+        content="Production grade value creation platform for Private Equity. Real time CFO dashboards, automated portfolio reporting, cross portfolio analytics.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --marble: #faf9f7;
+            --marble-warm: #f5f3ef;
+            --marble-vein: #eae6df;
+            --card: #ffffff;
+            --card-hover: #fdfcfa;
+            --border: #e8e4de;
+            --border-light: #f0ece6;
+            --text-dark: #1a1a1a;
+            --text-mid: #555555;
+            --text-light: #8a8a8a;
+            --accent: #1a1a1a;
+            --gold: #B8960C;
+            --gold-dim: rgba(184, 150, 12, 0.08);
+            --gold-border: rgba(184, 150, 12, 0.25);
+            --green: #1a8a3f;
+            --green-bg: rgba(26, 138, 63, 0.08);
+            --orange: #c4700a;
+            --orange-bg: rgba(196, 112, 10, 0.08);
+            --blue: #2563eb;
+            --blue-bg: rgba(37, 99, 235, 0.06);
+            --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            --max-width: 1200px;
+            --radius: 12px;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.06), 0 1px 4px rgba(0, 0, 0, 0.04);
+            --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.04);
+        }
+
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            font-family: var(--font);
+            background: var(--marble);
+            background-image:
+                radial-gradient(ellipse 120% 80% at 20% 10%, rgba(184, 150, 12, 0.03) 0%, transparent 50%),
+                radial-gradient(ellipse 100% 60% at 80% 90%, rgba(184, 150, 12, 0.02) 0%, transparent 50%),
+                linear-gradient(135deg, rgba(234, 230, 223, 0.3) 0%, transparent 40%, rgba(234, 230, 223, 0.2) 70%, transparent 100%);
+            color: var(--text-dark);
+            line-height: 1.6;
+            font-size: 15px;
+            min-height: 100vh;
+        }
+
+        ::selection {
+            background: var(--gold);
+            color: white;
+        }
+
+        a {
+            color: var(--gold);
+            text-decoration: none;
+            transition: opacity 0.2s;
+        }
+
+        a:hover {
+            opacity: 0.8;
+        }
+
+        .container {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 0 32px;
+        }
+
+        /* ─── NAV ─── */
+        .nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(250, 249, 247, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav-inner {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 0 32px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-logo {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-dark);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        .nav-logo span {
+            color: var(--gold);
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .nav-link {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-mid);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: color 0.2s;
+        }
+
+        .nav-link:hover {
+            color: var(--text-dark);
+            opacity: 1;
+        }
+
+        .nav-cta {
+            font-size: 11px;
+            font-weight: 600;
+            color: white !important;
+            background: var(--text-dark);
+            padding: 8px 20px;
+            border-radius: 6px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        .nav-cta:hover {
+            background: #333;
+            opacity: 1;
+            transform: translateY(-1px);
+        }
+
+        /* ─── HERO ─── */
+        .hero {
+            padding: 80px 0 48px;
+            text-align: center;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--gold-dim);
+            border: 1px solid var(--gold-border);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--gold);
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 24px;
+        }
+
+        .hero-badge::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--gold);
+        }
+
+        .hero h1 {
+            font-size: clamp(36px, 5vw, 56px);
+            font-weight: 800;
+            color: var(--text-dark);
+            line-height: 1.1;
+            letter-spacing: -1px;
+            margin-bottom: 16px;
+        }
+
+        .hero p {
+            font-size: 17px;
+            color: var(--text-mid);
+            max-width: 560px;
+            margin: 0 auto 40px;
+            line-height: 1.7;
+        }
+
+        /* ─── KPI ROW ─── */
+        .kpi-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 48px;
+        }
+
+        .kpi-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px;
+            box-shadow: var(--shadow-sm);
+            position: relative;
+            overflow: hidden;
+            transition: box-shadow 0.3s, transform 0.3s;
+        }
+
+        .kpi-card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .kpi-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-light);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .kpi-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-dark);
+            line-height: 1;
+        }
+
+        .kpi-value .unit {
+            font-size: 14px;
+            font-weight: 400;
+            color: var(--text-light);
+        }
+
+        .kpi-sub {
+            font-size: 12px;
+            font-weight: 500;
+            margin-top: 6px;
+        }
+
+        .kpi-sub.green {
+            color: var(--green);
+        }
+
+        .kpi-sub.gold {
+            color: var(--gold);
+        }
+
+        /* ─── X-RAY TOGGLE ─── */
+        .xray-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            background: var(--marble-warm);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            transition: all 0.2s;
+            color: var(--text-light);
+        }
+
+        .xray-btn:hover {
+            background: var(--gold-dim);
+            border-color: var(--gold-border);
+            color: var(--gold);
+        }
+
+        .xray-btn.active {
+            background: var(--text-dark);
+            border-color: var(--text-dark);
+            color: white;
+        }
+
+        .xray-panel {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease, padding 0.4s ease, margin 0.4s ease;
+            background: #1a1a1a;
+            border-radius: 0 0 var(--radius) var(--radius);
+            margin: 0 -24px -24px;
+            padding: 0 24px;
+            color: #e0e0e0;
+        }
+
+        .xray-panel.active {
+            max-height: 400px;
+            padding: 20px 24px 24px;
+            margin-top: 16px;
+        }
+
+        .xray-tag {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-right: 6px;
+            margin-bottom: 4px;
+        }
+
+        .xray-tag.aws {
+            background: rgba(255, 153, 0, 0.15);
+            color: #ff9900;
+        }
+
+        .xray-tag.terraform {
+            background: rgba(96, 71, 211, 0.15);
+            color: #a78bfa;
+        }
+
+        .xray-tag.github {
+            background: rgba(88, 166, 255, 0.15);
+            color: #58a6ff;
+        }
+
+        .xray-service {
+            font-size: 13px;
+            color: #aaa;
+            margin-top: 8px;
+            line-height: 1.6;
+        }
+
+        .xray-file {
+            font-family: 'SF Mono', monospace;
+            font-size: 11px;
+            color: #888;
+            margin-top: 6px;
+        }
+
+        .xray-screenshot {
+            width: 100%;
+            background: #111;
+            border-radius: 6px;
+            margin-top: 12px;
+            border: 1px solid #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            color: #555;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            overflow: hidden;
+        }
+
+        .xray-screenshot img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 5px;
+            transition: transform 0.2s ease;
+        }
+
+        .xray-screenshot img:hover {
+            transform: scale(1.02);
+            cursor: pointer;
+        }
+
+        /* ─── SECTION HEADERS ─── */
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .section-subtitle {
+            font-size: 13px;
+            color: var(--text-light);
+        }
+
+        .section-badge {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--green);
+            background: var(--green-bg);
+            padding: 4px 10px;
+            border-radius: 4px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        /* ─── PORTFOLIO COMPANY CARDS ─── */
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-bottom: 48px;
+        }
+
+        .portfolio-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 28px;
+            box-shadow: var(--shadow-sm);
+            position: relative;
+            overflow: hidden;
+            transition: box-shadow 0.3s, transform 0.3s;
+        }
+
+        .portfolio-card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .portfolio-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .portfolio-name {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 4px;
+        }
+
+        .portfolio-industry {
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text-light);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .portfolio-status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .status-dot.live {
+            background: var(--green);
+        }
+
+        .status-dot.ready {
+            background: var(--gold);
+        }
+
+        .portfolio-metrics {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .portfolio-metric {}
+
+        .portfolio-metric-label {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--text-light);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .portfolio-metric-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .portfolio-metric-value .sm {
+            font-size: 12px;
+            font-weight: 400;
+            color: var(--text-light);
+        }
+
+        /* ─── VCP SCORECARD ─── */
+        .scorecard {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 28px;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 48px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .vcp-row {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .vcp-row:last-child {
+            border-bottom: none;
+        }
+
+        .vcp-label {
+            width: 200px;
+            flex-shrink: 0;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+
+        .vcp-bar-wrap {
+            flex: 1;
+        }
+
+        .vcp-bar-track {
+            width: 100%;
+            height: 8px;
+            background: var(--marble-warm);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .vcp-bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .vcp-bar-fill.green {
+            background: var(--green);
+        }
+
+        .vcp-bar-fill.orange {
+            background: var(--orange);
+        }
+
+        .vcp-bar-fill.gold {
+            background: var(--gold);
+        }
+
+        .vcp-values {
+            width: 180px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .vcp-actual {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .vcp-badge {
+            font-size: 10px;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 4px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .vcp-badge.on-track {
+            background: var(--green-bg);
+            color: var(--green);
+        }
+
+        .vcp-badge.at-risk {
+            background: var(--orange-bg);
+            color: var(--orange);
+        }
+
+        .vcp-badge.ahead {
+            background: var(--gold-dim);
+            color: var(--gold);
+        }
+
+        /* ─── DATA FLOW ─── */
+        .flow-wrap {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 32px;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 48px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .data-flow {
+            display: flex;
+            align-items: stretch;
+            gap: 0;
+            overflow-x: auto;
+        }
+
+        .flow-node {
+            flex: 1;
+            min-width: 140px;
+            text-align: center;
+            padding: 20px 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--marble-warm);
+            transition: all 0.3s;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .flow-node:hover {
+            background: var(--gold-dim);
+            border-color: var(--gold-border);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .flow-node-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .flow-node h4 {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 4px;
+        }
+
+        .flow-node p {
+            font-size: 10px;
+            color: var(--text-light);
+            line-height: 1.4;
+        }
+
+        .flow-node-service {
+            display: block;
+            font-size: 9px;
+            color: var(--gold);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-top: 6px;
+            font-weight: 600;
+        }
+
+        .flow-arrow {
+            flex: 0 0 auto;
+            width: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gold);
+            font-size: 14px;
+            opacity: 0.5;
+        }
+
+        .flow-node .flow-tooltip {
+            position: absolute;
+            bottom: calc(100% + 12px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1a1a1a;
+            color: #e0e0e0;
+            padding: 14px 18px;
+            border-radius: 8px;
+            font-size: 12px;
+            line-height: 1.5;
+            width: 220px;
+            text-align: left;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s, transform 0.2s;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+            z-index: 10;
+        }
+
+        .flow-node .flow-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-top-color: #1a1a1a;
+        }
+
+        .flow-node:hover .flow-tooltip {
+            opacity: 1;
+            transform: translateX(-50%) translateY(-4px);
+            pointer-events: auto;
+        }
+
+        .flow-tooltip .tt-tag {
+            font-size: 9px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #ff9900;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .flow-tooltip .tt-file {
+            font-family: 'SF Mono', monospace;
+            font-size: 10px;
+            color: #777;
+            margin-top: 6px;
+        }
+
+        /* ─── TECH STACK ─── */
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 48px;
+        }
+
+        .tech-badge {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .tech-badge:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+            border-color: var(--gold-border);
+        }
+
+        .tech-badge-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .tech-badge-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 2px;
+        }
+
+        .tech-badge-desc {
+            font-size: 11px;
+            color: var(--text-light);
+        }
+
+        .tech-badge .tech-tooltip {
+            position: absolute;
+            bottom: calc(100% + 10px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1a1a1a;
+            color: #ccc;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 11px;
+            line-height: 1.5;
+            width: 220px;
+            text-align: left;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+            z-index: 10;
+        }
+
+        .tech-badge .tech-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-top-color: #1a1a1a;
+        }
+
+        .tech-badge:hover .tech-tooltip {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .tech-tooltip strong {
+            color: #fff;
+        }
+
+        /* ─── SQL CONSOLE ─── */
+        .interactive-wrap {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 48px;
+        }
+
+        .sql-console {
+            background: #1a1a1a;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .sql-tabs {
+            display: flex;
+            background: #111;
+            border-bottom: 1px solid #333;
+        }
+
+        .sql-tab {
+            padding: 10px 18px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #888;
+            cursor: pointer;
+            border: none;
+            background: none;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+            font-family: var(--font);
+            letter-spacing: 0.5px;
+        }
+
+        .sql-tab:hover {
+            color: #ccc;
+        }
+
+        .sql-tab.active {
+            color: var(--gold);
+            border-bottom-color: var(--gold);
+        }
+
+        .sql-editor {
+            padding: 20px;
+            min-height: 200px;
+        }
+
+        .sql-editor pre {
+            margin: 0;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            color: #ccc;
+            white-space: pre-wrap;
+        }
+
+        .sql-editor .keyword {
+            color: #ff7b72;
+        }
+
+        .sql-editor .string {
+            color: #a5d6ff;
+        }
+
+        .sql-editor .comment {
+            color: #666;
+            font-style: italic;
+        }
+
+        .sql-editor .table-name {
+            color: #d2a8ff;
+        }
+
+        .sql-editor .json-key {
+            color: #79c0ff;
+        }
+
+        .sql-input {
+            background: rgba(184, 150, 12, 0.1);
+            border: 1px solid rgba(184, 150, 12, 0.3);
+            color: var(--gold);
+            font-family: 'SF Mono', monospace;
+            font-size: 13px;
+            padding: 2px 6px;
+            width: 100px;
+            border-radius: 4px;
+            text-align: right;
+        }
+
+        .sql-input:focus {
+            outline: none;
+            border-color: var(--gold);
+            box-shadow: 0 0 0 2px rgba(184, 150, 12, 0.15);
+        }
+
+        .sql-actions {
+            padding: 12px 20px;
+            border-top: 1px solid #333;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .sql-execute {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 20px;
+            background: var(--gold);
+            color: white;
+            font-family: var(--font);
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .sql-execute:hover {
+            filter: brightness(1.1);
+            transform: translateY(-1px);
+        }
+
+        .sql-execute:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .sql-output {
+            font-size: 12px;
+            font-family: 'SF Mono', monospace;
+            color: #666;
+        }
+
+        .sql-output.success {
+            color: var(--green);
+        }
+
+        .sql-output.processing {
+            color: var(--gold);
+        }
+
+        /* ─── LIVE CHART ─── */
+        .live-chart {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            position: relative;
+        }
+
+        .live-chart-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .live-chart-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .live-chart-legend {
+            display: flex;
+            gap: 14px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 11px;
+            color: var(--text-light);
+        }
+
+        .legend-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 2px;
+        }
+
+        .legend-dot.revenue {
+            background: var(--gold);
+        }
+
+        .legend-dot.cogs {
+            background: var(--blue);
+        }
+
+        .legend-dot.opex {
+            background: var(--text-light);
+        }
+
+        .live-chart-body {
+            padding: 24px 20px;
+        }
+
+        .chart-company {
+            margin-bottom: 20px;
+        }
+
+        .chart-company:last-child {
+            margin-bottom: 0;
+        }
+
+        .chart-company-name {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+
+        .chart-bars {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .chart-bar-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chart-bar-label {
+            font-size: 11px;
+            color: var(--text-light);
+            width: 55px;
+            flex-shrink: 0;
+        }
+
+        .chart-bar-track {
+            flex: 1;
+            height: 16px;
+            background: var(--marble-warm);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .chart-bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .chart-bar-fill.revenue {
+            background: var(--gold);
+        }
+
+        .chart-bar-fill.cogs {
+            background: var(--blue);
+        }
+
+        .chart-bar-fill.opex {
+            background: var(--text-light);
+        }
+
+        .chart-bar-value {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-dark);
+            width: 60px;
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .chart-total-row {
+            margin-top: 16px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .chart-total-label {
+            font-size: 11px;
+            color: var(--text-light);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .chart-total-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--gold);
+        }
+
+        .processing-overlay {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.9);
+            z-index: 10;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 12px;
+            border-radius: var(--radius);
+        }
+
+        .processing-overlay.active {
+            display: flex;
+        }
+
+        .processing-spinner {
+            width: 28px;
+            height: 28px;
+            border: 3px solid var(--border);
+            border-top-color: var(--gold);
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .processing-text {
+            font-size: 13px;
+            color: var(--gold);
+            font-weight: 500;
+        }
+
+        /* ─── FOOTER ─── */
+        .footer {
+            text-align: center;
+            padding: 64px 0;
+            border-top: 1px solid var(--border);
+            margin-top: 32px;
+        }
+
+        .footer h2 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 12px;
+        }
+
+        .footer p {
+            font-size: 14px;
+            color: var(--text-mid);
+            max-width: 460px;
+            margin: 0 auto 32px;
+        }
+
+        .footer-ctas {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 48px;
+        }
+
+        .btn-dark {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            color: white;
+            background: var(--text-dark);
+            padding: 12px 28px;
+            border-radius: 8px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: all 0.3s;
+            font-family: var(--font);
+        }
+
+        .btn-dark:hover {
+            background: #333;
+            opacity: 1;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-outline {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-dark);
+            background: transparent;
+            padding: 12px 28px;
+            border-radius: 8px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            border: 1px solid var(--border);
+            transition: all 0.3s;
+            font-family: var(--font);
+        }
+
+        .btn-outline:hover {
+            border-color: var(--gold);
+            color: var(--gold);
+            opacity: 1;
+        }
+
+        .footer-meta {
+            font-size: 13px;
+            color: var(--text-light);
+        }
+
+        .footer-meta strong {
+            color: var(--text-dark);
+        }
+
+        .footer-tech {
+            font-size: 11px;
+            color: var(--text-light);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-top: 8px;
+        }
+
+        /* ─── TOP X-RAY NOTICE BANNER ─── */
+        .xray-banner {
+            margin-bottom: 32px;
+            background: linear-gradient(135deg, rgba(184, 150, 12, 0.08), rgba(255, 255, 255, 0.9));
+            border: 1px solid rgba(184, 150, 12, 0.35);
+            border-radius: var(--radius);
+            padding: 16px 22px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .xray-banner-inner {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .xray-banner-icon {
+            font-size: 16px;
+            color: var(--text-light);
+            background: var(--marble-warm);
+            border: 1px solid var(--border);
+            width: 38px;
+            height: 38px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+        }
+
+        .xray-banner-text {
+            font-size: 13.5px;
+            line-height: 1.55;
+            color: var(--text-dark);
+        }
+
+        .gear-pill {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--marble-warm);
+            border: 1px solid var(--border);
+            color: var(--text-light);
+            width: 22px;
+            height: 22px;
+            border-radius: 5px;
+            font-size: 12px;
+            vertical-align: middle;
+            margin: 0 4px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+        }
+
+        /* ─── INSIDE THE INFRASTRUCTURE (FAQ TOGGLE) ─── */
+        .faq-section {
+            margin-top: 64px;
+            margin-bottom: 64px;
+        }
+
+        .faq-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .faq-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+            transition: all 0.25s ease;
+        }
+
+        .faq-card:hover {
+            border-color: rgba(184, 150, 12, 0.35);
+        }
+
+        .faq-card.active {
+            border-color: var(--gold);
+            box-shadow: var(--shadow-md);
+        }
+
+        .faq-question {
+            padding: 20px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            cursor: pointer;
+            user-select: none;
+            background: transparent;
+            width: 100%;
+            border: none;
+            text-align: left;
+            font-family: var(--font);
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-dark);
+            transition: color 0.2s ease;
+        }
+
+        .faq-question:hover {
+            color: var(--gold);
+        }
+
+        .faq-question-num {
+            font-family: 'SF Mono', monospace;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--gold);
+            margin-right: 8px;
+        }
+
+        .faq-toggle-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            background: var(--marble-warm);
+            border: 1px solid var(--border);
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+            transition: transform 0.3s ease, background 0.2s, color 0.2s;
+        }
+
+        .faq-card.active .faq-toggle-icon {
+            transform: rotate(45deg);
+            background: var(--navy-deep);
+            color: #fff;
+            border-color: var(--navy-deep);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.35s ease, padding 0.35s ease;
+            padding: 0 24px;
+            font-size: 14px;
+            line-height: 1.65;
+            color: var(--text-mid);
+            background: var(--marble-subtle);
+            border-top: 1px solid transparent;
+        }
+
+        .faq-card.active .faq-answer {
+            max-height: 500px;
+            padding: 18px 24px 22px;
+            border-top: 1px solid var(--border);
+        }
+
+        .faq-answer strong {
+            color: var(--text-dark);
+        }
+
+        /* ─── X-RAY SCREENSHOT TITLE LABELS ─── */
+        .xray-screenshot-title {
+            font-family: 'SF Mono', monospace;
+            font-size: 10.5px;
+            font-weight: 700;
+            letter-spacing: 0.8px;
+            color: var(--gold);
+            text-transform: uppercase;
+            margin-top: 12px;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .xray-screenshot-title::before {
+            content: "●";
+            font-size: 8px;
+            color: var(--gold);
+        }
+
+        /* ─── DATA SOURCES & LINEAGE NOTE ─── */
+        .data-sources-note {
+            margin-top: 24px;
+            padding: 18px 22px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            font-size: 13px;
+            line-height: 1.6;
+            color: var(--text-mid);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .data-sources-note strong {
+            color: var(--text-dark);
+        }
+
+        .data-sources-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .source-badge {
+            background: var(--marble-subtle);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 5px 12px;
+            font-size: 11.5px;
+            font-weight: 600;
+            color: var(--text-dark);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .source-badge.highlight {
+            border-color: rgba(184, 150, 12, 0.45);
+            background: rgba(184, 150, 12, 0.08);
+            color: var(--gold);
+        }
+
+        /* ─── ARCHITECTURE EVIDENCE GALLERY ─── */
+        .evidence-section {
+            margin-top: 64px;
+            margin-bottom: 64px;
+        }
+
+        .evidence-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+
+        .evidence-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s ease;
+        }
+
+        .evidence-card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-3px);
+            border-color: var(--gold);
+        }
+
+        .evidence-thumb-wrap {
+            width: 100%;
+            height: 150px;
+            background: #0d1117;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .evidence-thumb-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: top;
+            transition: transform 0.3s ease;
+            display: block;
+        }
+
+        .evidence-card:hover .evidence-thumb-wrap img {
+            transform: scale(1.05);
+        }
+
+        .evidence-body {
+            padding: 14px 16px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        .evidence-title {
+            font-family: 'SF Mono', monospace;
+            font-size: 10.5px;
+            font-weight: 700;
+            color: var(--text-dark);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        .evidence-desc {
+            font-size: 12px;
+            color: var(--text-light);
+            line-height: 1.45;
+            margin-bottom: 10px;
+            flex: 1;
+        }
+
+        .evidence-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 10px;
+            color: var(--gold);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-top: 1px solid var(--border);
+            padding-top: 8px;
+        }
+
+        /* ─── HYPOTHETICAL NOTICE ─── */
+        .hypothetical-notice {
+            margin-top: 36px;
+            padding: 16px 20px;
+            border-top: 1px solid var(--border);
+            font-size: 11.5px;
+            color: var(--text-light);
+            line-height: 1.6;
+            text-align: center;
+        }
+
+        .hypothetical-notice strong {
+            color: var(--text-mid);
+        }
+
+        /* ─── RESPONSIVE ─── */
+        @media (max-width: 968px) {
+            .kpi-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .portfolio-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tech-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .evidence-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .interactive-wrap {
+                grid-template-columns: 1fr;
+            }
+
+            .data-flow {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 8px;
+            }
+
+            .flow-arrow {
+                width: 24px;
+            }
+
+            .nav-link {
+                display: none;
+            }
+
+            .vcp-row {
+                flex-wrap: wrap;
+            }
+
+            .vcp-label {
+                width: 100%;
+            }
+
+            .vcp-values {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding: 0 16px;
+            }
+
+            .kpi-row,
+            .tech-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .evidence-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .portfolio-metrics {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+
+            .footer-ctas {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .hero h1 {
+                letter-spacing: 0;
+            }
+
+            .live-chart-legend {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="nav">
+        <div class="nav-inner">
+            <div class="nav-logo">APEX <span>VAULT</span></div>
+            <div class="nav-right">
+                <a href="#portfolio" class="nav-link">Portfolio</a>
+                <a href="#architecture" class="nav-link">Architecture</a>
+                <a href="#evidence" class="nav-link">Evidence</a>
+                <a href="#demo" class="nav-link">Live Demo</a>
+                <a href="#faq" class="nav-link">Inside Infra</a>
+                <a href="https://github.com/maxx1/pe-data-landing-zone" target="_blank" class="nav-cta">GitHub →</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-badge">Live in Production</div>
+            <h1>Real time financial visibility across your entire portfolio.</h1>
+            <p>Automated data ingestion, CFO dashboards, and value creation tracking for 4 portfolio companies. Built on
+                AWS. Deployed via GitOps.</p>
+        </div>
+    </section>
+
+    <!-- KPI ROW & X-RAY NOTICE -->
+    <div class="container">
+        <div class="xray-banner">
+            <div class="xray-banner-inner">
+                <div class="xray-banner-icon">⚙</div>
+                <div class="xray-banner-text">
+                    <strong>Interactive Architecture Mode:</strong> Click the <span class="gear-pill">⚙</span> gear icon
+                    on any metric card, portfolio company, or architecture node across this page to reveal the
+                    behind-the-scenes infrastructure decision-making, AWS tools, Terraform source files, and live
+                    console proof.
+                </div>
+            </div>
+        </div>
+
+        <div class="kpi-row">
+            <div class="kpi-card">
+                <button class="xray-btn" onclick="toggleXray(this)" title="View infrastructure details">⚙</button>
+                <div class="kpi-label">Portfolio Revenue</div>
+                <div class="kpi-value" id="kpi-revenue">$72.4<span class="unit">M</span></div>
+                <div class="kpi-sub green">Across 4 companies</div>
+                <div class="xray-panel">
+                    <span class="xray-tag aws">AWS Athena</span><span class="xray-tag terraform">Terraform</span>
+                    <div class="xray-service">Revenue aggregated via Athena SQL queries across all portfolio company
+                        data stored in the S3 data lake. Glue Data Catalog maps each company's financial schema.</div>
+                    <div class="xray-file">terraform/athena.tf → aws_athena_workgroup</div>
+                    <div class="xray-screenshot-title">SCREENSHOT: ATHENA QUERY RESULTS</div>
+                    <div class="xray-screenshot">
+                        <a href="images/athena-query-results.png" target="_blank"
+                            title="Click to view full resolution screenshot">
+                            <img src="images/athena-query-results.png" alt="SCREENSHOT: ATHENA QUERY RESULTS">
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <button class="xray-btn" onclick="toggleXray(this)" title="View infrastructure details">⚙</button>
+                <div class="kpi-label">Gross Margin</div>
+                <div class="kpi-value" id="kpi-margin">37.2<span class="unit">%</span></div>
+                <div class="kpi-sub green">Above 35% target</div>
+                <div class="xray-panel">
+                    <span class="xray-tag aws">S3 + Glue</span><span class="xray-tag aws">Data Lineage</span>
+                    <div class="xray-service">Margin calculated from Revenue, COGS, and OpEx columns mapped in the Glue
+                        Data Catalog. Ingests and harmonizes financial data from Snowflake, PostgreSQL, NoSQL
+                        (DynamoDB), AWS Glue, and Amazon Athena.</div>
+                    <div class="xray-file">terraform/athena.tf → aws_glue_catalog_table</div>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <button class="xray-btn" onclick="toggleXray(this)" title="View infrastructure details">⚙</button>
+                <div class="kpi-label">Processing Speed</div>
+                <div class="kpi-value">206<span class="unit">ms</span></div>
+                <div class="kpi-sub gold">Per file ingestion</div>
+                <div class="xray-panel">
+                    <span class="xray-tag aws">Lambda</span><span class="xray-tag aws">CloudWatch</span>
+                    <div class="xray-service">Python 3.12 Lambda validates schema, sanitizes records, and copies to the
+                        processed bucket. 256MB memory, 30s timeout. Duration measured via CloudWatch metrics.</div>
+                    <div class="xray-file">terraform/lambda.tf → aws_lambda_function</div>
+                    <div class="xray-screenshot-title">SCREENSHOT: CLOUDWATCH DURATION GRAPH</div>
+                    <div class="xray-screenshot">
+                        <a href="images/cloudwatch-duration-graph.png" target="_blank"
+                            title="Click to view full resolution screenshot">
+                            <img src="images/cloudwatch-duration-graph.png" alt="SCREENSHOT: CLOUDWATCH DURATION GRAPH">
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <button class="xray-btn" onclick="toggleXray(this)" title="View infrastructure details">⚙</button>
+                <div class="kpi-label">Platform Cost</div>
+                <div class="kpi-value">$0<span class="unit">/mo</span></div>
+                <div class="kpi-sub green">When idle</div>
+                <div class="xray-panel">
+                    <span class="xray-tag aws">Serverless</span><span class="xray-tag github">Infracost</span>
+                    <div class="xray-service">Lambda, S3, Athena, and DynamoDB are all pay per use. Every PR runs
+                        automated cost analysis via Infracost and posts the dollar impact before merge.</div>
+                    <div class="xray-file">.github/workflows/plan.yml → Infracost step</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PORTFOLIO COMPANIES -->
+    <div class="container" id="portfolio">
+        <div class="section-header">
+            <div>
+                <div class="section-title">Portfolio Companies</div>
+                <div class="section-subtitle">4 isolated environments. One platform.</div>
+            </div>
+            <span class="section-badge">All Live</span>
+        </div>
+        <div class="portfolio-grid">
+            <div class="portfolio-card">
+                <button class="xray-btn" onclick="toggleXray(this)">⚙</button>
+                <div class="portfolio-top">
+                    <div>
+                        <div class="portfolio-name">Prestige Industrial Services</div>
+                        <div class="portfolio-industry">Industrial Services · $340M Revenue</div>
+                    </div>
+                    <div class="portfolio-status"><span class="status-dot live"></span><span
+                            style="color:var(--green)">Live</span></div>
+                </div>
+                <div class="portfolio-metrics">
+                    <div class="portfolio-metric">
+                        <div class="portfolio-metric-label">Revenue</div>
+                        <div class="portfolio-metric-value" id="prestige-rev">$34.2<span class="sm">M</span></div>
+                    </div>
+                    <div class="portfolio-metric">
+                        <div class="portfolio-metric-label">Margin</div>
+                        <div class="portfolio-metric-value" id="prestige-margin">38.3<span class="sm">%</span></div>
+                    </div>
+                    <div class="portfolio-metric">
+                        <div class="portfolio-metric-label">Data Status</div>
+                        <div class="portfolio-metric-value" style="color:var(--green); font-size:14px;">Current</div>
+                    </div>
+                </div>
+                <div class="xray-panel">
+                    <span class="xray-tag terraform">Reusable Module</span><span class="xray-tag aws">S3</span><span
+                        class="xray-tag aws">Lambda</span>
+                    <div class="xray-service">Primary portfolio company. Default client_name variable. Isolated S3 raw +
+                        processed buckets with dedicated encryption and lifecycle policies. Lambda trigger on uploads/
+                        prefix.</div>
+                    <div class="xray-file">terraform/s3.tf → module "raw_data_bucket", module "processed_data_bucket"
+                    </div>
+                    <div class="xray-screenshot-title">SCREENSHOT: S3 CONSOLE</div>
+                    <div class="xray-screenshot">
+                        <a href="images/s3-console-buckets.png" target="_blank"
+                            title="Click to view full resolution screenshot">
+                            <img src="images/s3-console-buckets.png" alt="SCREENSHOT: S3 CONSOLE">
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="portfolio-card">
+                <button class="xray-btn" onclick="toggleXray(this)">⚙</button>
+                <div class="portfolio-top">
+                    <div>
+                        <div class="portfolio-name">Clearwater Health Partners</div>
+                        <div class="portfolio-industry">Healthcare Staffing · $120M Revenue</div>
+                    </div>
+                    <div class="portfolio-status"><span class="status-dot live"></span><span
+                            style="color:var(--green)">Live</span></div>
+                </div>
+                <div class="portfolio-metrics">
+                    <div class="portfolio-metric">
+                        <div class="portfolio-metric-label">Revenue</div>
+                        <div class="portfolio-metric-value" id="clearwater-rev">$12.0<span class="sm">M</span></div>
+                    </div>
+                    <div class="portfolio-metric">
+                        <div class="portfolio-metric-label">Margin</div>
+                        <div class="portfolio-metric-value" id="clearwater-margin">40.0<span class="sm">%</span></div>
+                    </div>
+                    <div class="portfolio-metric">
+                        <div class="portfolio-metric-label">Data Status</div>
+                        <div class="portfolio-metric-value" style="color:var(--green); font-size:14px;">Current</div>
+                    </div>
+                </div>
+                <div class="xray-panel">
+                    <span class="xray-tag terraform">Module Reuse</span><span class="xray-tag aws">S3</span>
+                    <div class="xray-service">Onboarded using the same reusable S3 module. Automatically inherits
+                        encryption, versioning, lifecycle, and access policies. Proves multi-tenant scalability without
+                        code duplication.</div>
+                    <div class="xray-file">terraform/s3.tf → module "clearwater_raw_data_bucket"</div>
+                    <div class="xray-screenshot-title">SCREENSHOT: TERRAFORM MODULE REUSE</div>
+                    <div class="xray-screenshot">
+                        <a href="images/terraform-module-reuse.png" target="_blank"
+                            title="Click to view full resolution screenshot">
+                            <img src="images/terraform-module-reuse.png" alt="SCREENSHOT: TERRAFORM MODULE REUSE">
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="portfolio-card">
+                <button class="xray-btn" onclick="toggleXray(this)">⚙</button>
+                <div class="portfolio-top">
+                    <div>
+                        <div class="portfolio-name">Summit Ridge Logistics</div>
+                        <div class="portfolio-industry">Supply Chain / 3PL · $85M Revenue</div>
+                    </div>
+                    <div class="portfolio-status"><span class="status-dot live"></span><span
+                            style="color:var(--green)">Live</span></div>
+                </div>
+                <div class="portfolio-metrics">
+                    <div class="portfolio-metric">
+                        <div class="portfolio-metric-label">Revenue</div>
+                        <div class="portfolio-metric-value" id="summit-rev">$18.5<span class="sm">M</span></div>
+                    </div>
+                    <div class="portfolio-metric">
+                        <div class="portfolio-metric-label">On Time</div>
+                        <div class="portfolio-metric-value">94.2<span class="sm">%</span></div>
+                    </div>
+                    <div class="portfolio-metric">
+                        <div class="portfolio-metric-label">Data Status</div>
+                        <div class="portfolio-metric-value" style="color:var(--green); font-size:14px;">Current</div>
+                    </div>
+                </div>
+                <div class="xray-panel">
+                    <span class="xray-tag aws">DynamoDB</span><span class="xray-tag aws">S3</span><span
+                        class="xray-tag aws">Glue</span>
+                    <div class="xray-service">Dual data path: batch financials through S3, real time operational metrics
+                        through DynamoDB. Pay per request billing. Point in time recovery enabled. Glue Catalog table
+                        maps supply chain KPIs.</div>
+                    <div class="xray-file">terraform/dynamodb.tf → aws_dynamodb_table<br>terraform/athena.tf →
+                        aws_glue_catalog_table "operational_data"</div>
+                </div>
+            </div>
+            <div class="portfolio-card">
+                <button class="xray-btn" onclick="toggleXray(this)">⚙</button>
+                <div class="portfolio-top">
+                    <div>
+                        <div class="portfolio-name">Meridian Capital Advisors</div>
+                        <div class="portfolio-industry">Financial Advisory · $45M Revenue</div>
+                    </div>
+                    <div class="portfolio-status"><span class="status-dot ready"></span><span
+                            style="color:var(--gold)">Live</span></div>
+                </div>
+                <div class="portfolio-metrics">
+                    <div class="portfolio-metric">
+                        <div class="portfolio-metric-label">Revenue</div>
+                        <div class="portfolio-metric-value">$7.7<span class="sm">M</span></div>
+                    </div>
+                    <div class="portfolio-metric">
+                        <div class="portfolio-metric-label">Margin</div>
+                        <div class="portfolio-metric-value">42.1<span class="sm">%</span></div>
+                    </div>
+                    <div class="portfolio-metric">
+                        <div class="portfolio-metric-label">Data Status</div>
+                        <div class="portfolio-metric-value" style="color:var(--green); font-size:14px;">Current</div>
+                    </div>
+                </div>
+                <div class="xray-panel">
+                    <span class="xray-tag aws">S3</span><span class="xray-tag terraform">Snowflake Ready</span>
+                    <div class="xray-service">S3 data lake designed as a Snowflake staging layer. Financial schema uses
+                        CSV format compatible with Snowflake COPY INTO. Data partitioned for direct warehouse loading as
+                        analytical maturity scales.</div>
+                    <div class="xray-file">terraform/s3.tf → module "meridian_raw_data_bucket"</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- VALUE CREATION SCORECARD -->
+    <div class="container">
+        <div class="section-header">
+            <div>
+                <div class="section-title">Value Creation Scorecard</div>
+                <div class="section-subtitle">100 Day Plan tracking across the portfolio.</div>
+            </div>
+            <span class="section-badge">Live</span>
+        </div>
+        <div class="scorecard">
+            <button class="xray-btn" onclick="toggleXray(this)">⚙</button>
+            <div class="vcp-row">
+                <div class="vcp-label">Revenue Growth</div>
+                <div class="vcp-bar-wrap">
+                    <div class="vcp-bar-track">
+                        <div class="vcp-bar-fill orange" style="width: 0%" data-width="82%"></div>
+                    </div>
+                </div>
+                <div class="vcp-values"><span class="vcp-actual">12.3% of 15%</span><span class="vcp-badge at-risk">At
+                        Risk</span></div>
+            </div>
+            <div class="vcp-row">
+                <div class="vcp-label">Cost Reduction</div>
+                <div class="vcp-bar-wrap">
+                    <div class="vcp-bar-track">
+                        <div class="vcp-bar-fill green" style="width: 0%" data-width="72%"></div>
+                    </div>
+                </div>
+                <div class="vcp-values"><span class="vcp-actual">$1.8M of $2.5M</span><span
+                        class="vcp-badge on-track">On Track</span></div>
+            </div>
+            <div class="vcp-row">
+                <div class="vcp-label">Working Capital</div>
+                <div class="vcp-bar-wrap">
+                    <div class="vcp-bar-track">
+                        <div class="vcp-bar-fill gold" style="width: 0%" data-width="96%"></div>
+                    </div>
+                </div>
+                <div class="vcp-values"><span class="vcp-actual">4.8 of 5 days</span><span
+                        class="vcp-badge ahead">Ahead</span></div>
+            </div>
+            <div class="vcp-row">
+                <div class="vcp-label">100 Day Plan</div>
+                <div class="vcp-bar-wrap">
+                    <div class="vcp-bar-track">
+                        <div class="vcp-bar-fill green" style="width: 0%" data-width="72%"></div>
+                    </div>
+                </div>
+                <div class="vcp-values"><span class="vcp-actual">72% complete</span><span class="vcp-badge on-track">On
+                        Track</span></div>
+            </div>
+            <div class="xray-panel">
+                <span class="xray-tag aws">Athena</span><span class="xray-tag aws">Glue</span><span
+                    class="xray-tag aws">CloudWatch</span>
+                <div class="xray-service">Financial KPIs sourced from Athena queries against the Glue Catalog. Revenue
+                    growth calculated from period over period comparisons. Cost reduction tracked via tagged expense
+                    categories. CloudWatch dashboard provides real time operational health alongside these business
+                    metrics.</div>
+                <div class="xray-file">terraform/athena.tf · terraform/monitoring.tf</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DATA FLOW -->
+    <div class="container" id="architecture">
+        <div class="section-header">
+            <div>
+                <div class="section-title">Data Flow Architecture</div>
+                <div class="section-subtitle">From portfolio company upload to board ready insight.</div>
+            </div>
+        </div>
+        <div class="flow-wrap">
+            <div class="data-flow">
+                <div class="flow-node">
+                    <div class="flow-tooltip"><span class="tt-tag">AWS S3</span>Portfolio companies upload CSVs to an
+                        isolated S3 bucket with encryption and versioning.<div class="tt-file">terraform/s3.tf</div>
+                    </div>
+                    <div class="flow-node-icon">📄</div>
+                    <h4>Portfolio Upload</h4>
+                    <p>Financial data arrives</p><span class="flow-node-service">S3 Raw</span>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-node">
+                    <div class="flow-tooltip"><span class="tt-tag">AWS Lambda</span>Python 3.12 function validates
+                        schema, sanitizes data, adds metadata. Event driven, 206ms average.<div class="tt-file">
+                            terraform/lambda.tf</div>
+                    </div>
+                    <div class="flow-node-icon">⚡</div>
+                    <h4>Validate</h4>
+                    <p>Schema check, 206ms</p><span class="flow-node-service">Lambda</span>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-node">
+                    <div class="flow-tooltip"><span class="tt-tag">AWS S3</span>Clean, validated data partitioned by
+                        date. This is the "Context Layer" that downstream analytics consume.<div class="tt-file">
+                            terraform/s3.tf</div>
+                    </div>
+                    <div class="flow-node-icon">🏗️</div>
+                    <h4>Data Lake</h4>
+                    <p>Governed, partitioned</p><span class="flow-node-service">S3 Processed</span>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-node">
+                    <div class="flow-tooltip"><span class="tt-tag">AWS Glue</span>Maps processed data to SQL tables.
+                        Financial records + operational KPIs registered as external tables.<div class="tt-file">
+                            terraform/athena.tf</div>
+                    </div>
+                    <div class="flow-node-icon">📊</div>
+                    <h4>Catalog</h4>
+                    <p>Schema registry</p><span class="flow-node-service">Glue</span>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-node">
+                    <div class="flow-tooltip"><span class="tt-tag">AWS Athena</span>Standard SQL queries against the
+                        data lake. Encrypted results. Ready to feed into Snowflake or Power BI.<div class="tt-file">
+                            terraform/athena.tf</div>
+                    </div>
+                    <div class="flow-node-icon">🔍</div>
+                    <h4>Analytics</h4>
+                    <p>Cross portfolio SQL</p><span class="flow-node-service">Athena</span>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-node">
+                    <div class="flow-tooltip"><span class="tt-tag">AWS CloudWatch</span>Pipeline health, invocations,
+                        errors, latency, DynamoDB metrics. Dual alert policies via SNS.<div class="tt-file">
+                            terraform/monitoring.tf</div>
+                    </div>
+                    <div class="flow-node-icon">📈</div>
+                    <h4>Dashboard</h4>
+                    <p>CFO visibility</p><span class="flow-node-service">CloudWatch</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TECH STACK -->
+    <div class="container">
+        <div class="section-header">
+            <div>
+                <div class="section-title">Technology Stack</div>
+                <div class="section-subtitle">Hover for the rationale behind each choice.</div>
+            </div>
+        </div>
+        <div class="tech-grid">
+            <div class="tech-badge">
+                <div class="tech-tooltip"><strong>Why Terraform?</strong><br>PE portfolios span AWS and Azure. Terraform
+                    provides cloud agnostic IaC that follows the portfolio.<br><br>File: terraform/*.tf</div>
+                <div class="tech-badge-icon">🏗️</div>
+                <div class="tech-badge-name">Terraform</div>
+                <div class="tech-badge-desc">Infrastructure as Code</div>
+            </div>
+            <div class="tech-badge">
+                <div class="tech-tooltip"><strong>Why Lambda?</strong><br>Data arrives in bursts. Serverless means $0
+                    idle cost and sub-second processing. PE CFOs expect cost efficiency.<br><br>File:
+                    terraform/lambda.tf</div>
+                <div class="tech-badge-icon">⚡</div>
+                <div class="tech-badge-name">AWS Lambda</div>
+                <div class="tech-badge-desc">206ms processing</div>
+            </div>
+            <div class="tech-badge">
+                <div class="tech-tooltip"><strong>Why S3?</strong><br>8 isolated buckets across 4 companies. Raw +
+                    processed separation. Encryption, versioning, lifecycle policies inherited via reusable
+                    module.<br><br>File: terraform/s3.tf</div>
+                <div class="tech-badge-icon">🗄️</div>
+                <div class="tech-badge-name">Amazon S3</div>
+                <div class="tech-badge-desc">8 isolated buckets</div>
+            </div>
+            <div class="tech-badge">
+                <div class="tech-tooltip"><strong>Why DynamoDB?</strong><br>Supply chain data needs sub-millisecond
+                    reads. Pay per request billing keeps costs at $0 when idle. Point in time recovery
+                    enabled.<br><br>File: terraform/dynamodb.tf</div>
+                <div class="tech-badge-icon">⚙️</div>
+                <div class="tech-badge-name">DynamoDB</div>
+                <div class="tech-badge-desc">Operational data store</div>
+            </div>
+            <div class="tech-badge">
+                <div class="tech-tooltip"><strong>Why Glue + Athena?</strong><br>Financial analysts query portfolio data
+                    with standard SQL without managing databases. $0 when not querying.<br><br>File: terraform/athena.tf
+                </div>
+                <div class="tech-badge-icon">🔍</div>
+                <div class="tech-badge-name">Glue + Athena</div>
+                <div class="tech-badge-desc">SQL analytics layer</div>
+            </div>
+            <div class="tech-badge">
+                <div class="tech-tooltip"><strong>Why CloudWatch?</strong><br>6 widget dashboard. Lambda + DynamoDB
+                    metrics. Dual alarm policies (errors + throttles). SNS email alerts.<br><br>File:
+                    terraform/monitoring.tf</div>
+                <div class="tech-badge-icon">📈</div>
+                <div class="tech-badge-name">CloudWatch</div>
+                <div class="tech-badge-desc">Live monitoring</div>
+            </div>
+            <div class="tech-badge">
+                <div class="tech-tooltip"><strong>Why OIDC?</strong><br>Zero static credentials anywhere. GitHub Actions
+                    authenticates via federated identity. Audit ready from day one.<br><br>File: terraform/iam.tf</div>
+                <div class="tech-badge-icon">🔐</div>
+                <div class="tech-badge-name">OIDC Security</div>
+                <div class="tech-badge-desc">Zero static credentials</div>
+            </div>
+            <div class="tech-badge">
+                <div class="tech-tooltip"><strong>Why GitOps?</strong><br>Every change is peer reviewed, cost analyzed,
+                    and security scanned before merge. Full audit trail for exit readiness.<br><br>Files:
+                    .github/workflows/plan.yml, deploy.yml</div>
+                <div class="tech-badge-icon">🔄</div>
+                <div class="tech-badge-name">GitHub Actions</div>
+                <div class="tech-badge-desc">CI/CD pipeline</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- INTERACTIVE DEMO -->
+    <div class="container" id="demo">
+        <div class="section-header">
+            <div>
+                <div class="section-title">Live Demo</div>
+                <div class="section-subtitle">Change the numbers. Execute the query. Watch the dashboard update.</div>
+            </div>
+        </div>
+        <div class="interactive-wrap">
+            <div class="sql-console">
+                <div class="sql-tabs">
+                    <button class="sql-tab active" onclick="switchTab('postgresql')">PostgreSQL</button>
+                    <button class="sql-tab" onclick="switchTab('snowflake')">Snowflake</button>
+                    <button class="sql-tab" onclick="switchTab('dynamodb')">DynamoDB</button>
+                </div>
+                <div class="sql-editor" id="sql-editor"></div>
+                <div class="sql-actions">
+                    <button class="sql-execute" id="sql-execute-btn" onclick="executeQuery()"><span>▶</span>
+                        Execute</button>
+                    <span class="sql-output" id="sql-output">Change values, then execute</span>
+                </div>
+            </div>
+            <div class="live-chart" style="position: relative;">
+                <div class="processing-overlay" id="processing-overlay">
+                    <div class="processing-spinner"></div>
+                    <div class="processing-text">Processing via Lambda... 206ms</div>
+                </div>
+                <div class="live-chart-header">
+                    <span class="live-chart-title">Cross Portfolio Analytics</span>
+                    <div class="live-chart-legend">
+                        <div class="legend-item"><span class="legend-dot revenue"></span>Revenue</div>
+                        <div class="legend-item"><span class="legend-dot cogs"></span>COGS</div>
+                        <div class="legend-item"><span class="legend-dot opex"></span>OpEx</div>
+                    </div>
+                </div>
+                <div class="live-chart-body" id="live-chart-body"></div>
+            </div>
+        </div>
+
+        <!-- DATA LINEAGE & SOURCES NOTE -->
+        <div class="data-sources-note">
+            <div><strong>Data Lineage & Pipeline Sources:</strong> Revenue, COGS, and OpEx are aggregated across active
+                and supported data sources in the platform architecture:</div>
+            <div class="data-sources-badges">
+                <span class="source-badge highlight">❄️ Snowflake Data Warehouse</span>
+                <span class="source-badge highlight">🐘 PostgreSQL Transactional DB</span>
+                <span class="source-badge highlight">⚡ NoSQL (DynamoDB) Real-Time</span>
+                <span class="source-badge highlight">📑 AWS Glue Data Catalog</span>
+                <span class="source-badge highlight">🔍 Amazon Athena SQL Engine</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ARCHITECTURE EVIDENCE GALLERY (MAPPED LEFT TO RIGHT) -->
+    <div class="container evidence-section" id="evidence">
+        <div class="section-header">
+            <div>
+                <div class="section-title">Production Infrastructure Evidence</div>
+                <div class="section-subtitle">Real console proof from AWS and Terraform, ordered as mapped across the
+                    platform from left to right.</div>
+            </div>
+            <span class="section-badge">Verified Deployments</span>
+        </div>
+        <div class="evidence-grid">
+            <!-- 1. SCREENSHOT: ATHENA QUERY RESULTS -->
+            <div class="evidence-card">
+                <div class="evidence-thumb-wrap">
+                    <a href="images/athena-query-results.png" target="_blank"
+                        title="Click to view full resolution screenshot">
+                        <img src="images/athena-query-results.png" alt="SCREENSHOT: ATHENA QUERY RESULTS">
+                    </a>
+                </div>
+                <div class="evidence-body">
+                    <div class="evidence-title">SCREENSHOT: ATHENA QUERY RESULTS</div>
+                    <div class="evidence-desc">Serverless SQL queries executing against S3 financial records via Glue
+                        Catalog. 431ms run time with 0.22 KB scanned.</div>
+                    <div class="evidence-meta">
+                        <span>AWS Athena · S3</span>
+                        <span>View Full ↗</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. SCREENSHOT: CLOUDWATCH DURATION GRAPH -->
+            <div class="evidence-card">
+                <div class="evidence-thumb-wrap">
+                    <a href="images/cloudwatch-duration-graph.png" target="_blank"
+                        title="Click to view full resolution screenshot">
+                        <img src="images/cloudwatch-duration-graph.png" alt="SCREENSHOT: CLOUDWATCH DURATION GRAPH">
+                    </a>
+                </div>
+                <div class="evidence-body">
+                    <div class="evidence-title">SCREENSHOT: CLOUDWATCH DURATION GRAPH</div>
+                    <div class="evidence-desc">Live production dashboard tracking 206.3ms Lambda processing duration, 0
+                        errors, and 0 throttling events.</div>
+                    <div class="evidence-meta">
+                        <span>CloudWatch · Lambda</span>
+                        <span>View Full ↗</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. SCREENSHOT: S3 CONSOLE -->
+            <div class="evidence-card">
+                <div class="evidence-thumb-wrap">
+                    <a href="images/s3-console-buckets.png" target="_blank"
+                        title="Click to view full resolution screenshot">
+                        <img src="images/s3-console-buckets.png" alt="SCREENSHOT: S3 CONSOLE">
+                    </a>
+                </div>
+                <div class="evidence-body">
+                    <div class="evidence-title">SCREENSHOT: S3 CONSOLE</div>
+                    <div class="evidence-desc">Multi-tenant S3 data lake architecture showing isolated raw, processed,
+                        query results, and tfstate buckets in us-east-2.</div>
+                    <div class="evidence-meta">
+                        <span>Amazon S3 Console</span>
+                        <span>View Full ↗</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. SCREENSHOT: TERRAFORM MODULE REUSE -->
+            <div class="evidence-card">
+                <div class="evidence-thumb-wrap">
+                    <a href="images/terraform-module-reuse.png" target="_blank"
+                        title="Click to view full resolution screenshot">
+                        <img src="images/terraform-module-reuse.png" alt="SCREENSHOT: TERRAFORM MODULE REUSE">
+                    </a>
+                </div>
+                <div class="evidence-body">
+                    <div class="evidence-title">SCREENSHOT: TERRAFORM MODULE REUSE</div>
+                    <div class="evidence-desc">Modular Infrastructure as Code enabling rapid onboarding of portfolio
+                        companies in 2 concise module declarations.</div>
+                    <div class="evidence-meta">
+                        <span>Terraform · GitOps</span>
+                        <span>View Full ↗</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- INSIDE THE INFRASTRUCTURE (FAQ SECTION) -->
+    <div class="container faq-section" id="faq">
+        <div class="section-header">
+            <div>
+                <div class="section-title">Inside the Infrastructure</div>
+                <div class="section-subtitle">Architectural rationale, technical implementation, and strategic design.</div>
+            </div>
+            <span class="section-badge">Architecture FAQ</span>
+        </div>
+        <div class="faq-grid">
+            <!-- Q1 -->
+            <div class="faq-card">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    <span><span class="faq-question-num">01</span> How does Apex Vault replace massive, fragmented spreadsheets for private equity portfolio management?</span>
+                    <span class="faq-toggle-icon">+</span>
+                </button>
+                <div class="faq-answer">
+                    Instead of portfolio company finance teams manually compiling and emailing disconnected Excel workbooks at quarter-end, each acquisition uploads standardized financial records to an isolated S3 raw drop-zone. Within <strong>206ms</strong>, event-driven AWS Lambda functions validate schemas, sanitize records, and partition data into a governed S3 data lake where AWS Glue and Athena make it immediately queryable via standard SQL.
+                </div>
+            </div>
+
+            <!-- Q2 -->
+            <div class="faq-card">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    <span><span class="faq-question-num">02</span> How does the platform support operational initiative management and milestones?</span>
+                    <span class="faq-toggle-icon">+</span>
+                </button>
+                <div class="faq-answer">
+                    Apex Vault implements a <strong>dual-path data architecture</strong>. While batch financial statements flow through S3, operational tracking metrics and milestone events (such as supply chain overhauls, software migrations, and operational throughput) stream into Amazon DynamoDB. This provides real-time milestone visibility and low-latency KPI retrieval alongside periodic financial reporting.
+                </div>
+            </div>
+
+            <!-- Q3 -->
+            <div class="faq-card">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    <span><span class="faq-question-num">03</span> How does automated cross-portfolio reporting work for board presentations?</span>
+                    <span class="faq-toggle-icon">+</span>
+                </button>
+                <div class="faq-answer">
+                    Using <strong>Amazon Athena</strong> and the <strong>AWS Glue Data Catalog</strong>, operating partners and CFOs can run cross-tenant SQL queries that aggregate revenue, EBITDA, and expense metrics across all portfolio companies simultaneously. This generates instant board-level rollups without waiting days for manual accounting reconciliation.
+                </div>
+            </div>
+
+            <!-- Q4 -->
+            <div class="faq-card">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    <span><span class="faq-question-num">04</span> How does Apex Vault enable AI integration and automated executive narratives?</span>
+                    <span class="faq-toggle-icon">+</span>
+                </button>
+                <div class="faq-answer">
+                    AI agents and LLMs require clean, governed, and structured data to generate accurate risk assessments and executive summaries without hallucinating. Apex Vault serves as the foundational <strong>Context Layer</strong>, organizing disparate portfolio data into a consistent schema that AI tools can reliably query to detect operational bottlenecks and draft sponsor narratives.
+                </div>
+            </div>
+
+            <!-- Q5 -->
+            <div class="faq-card">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    <span><span class="faq-question-num">05</span> Does the platform support supply chain and operational planning alongside finance?</span>
+                    <span class="faq-toggle-icon">+</span>
+                </button>
+                <div class="faq-answer">
+                    Yes. Modeled through Summit Ridge Logistics, the architecture ingests high-frequency supply chain records, fulfillment milestones, and inventory KPIs via <strong>DynamoDB</strong> while harmonizing batch transactional data in S3. This provides executive visibility across both financial performance and operational execution.
+                </div>
+            </div>
+
+            <!-- Q6 -->
+            <div class="faq-card">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    <span><span class="faq-question-num">06</span> How does the platform integrate with enterprise data platforms and data warehouses?</span>
+                    <span class="faq-toggle-icon">+</span>
+                </button>
+                <div class="faq-answer">
+                    Apex Vault is engineered as a centralized cloud landing zone and lakehouse staging layer rather than a replacement for core enterprise systems. It standardizes, validates, and stages raw transactional data from disparate company ERPs, making it immediately accessible for downstream loading into enterprise data warehouses (such as Snowflake), financial consolidation platforms, and business intelligence dashboards.
+                </div>
+            </div>
+
+            <!-- Q7 -->
+            <div class="faq-card">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    <span><span class="faq-question-num">07</span> What is Apex Vault in simple terms?</span>
+                    <span class="faq-toggle-icon">+</span>
+                </button>
+                <div class="faq-answer">
+                    Apex Vault is an automated cloud data landing zone and portfolio value-creation platform engineered on AWS. It solves the private equity data blind spot by transforming fragmented, slow, multi-company financial data into a single, real-time source of truth for CFOs, operating partners, and investment committees—deployed entirely via automated GitOps with $0 idle cost.
+                </div>
+            </div>
+
+            <!-- Q8 -->
+            <div class="faq-card">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    <span><span class="faq-question-num">08</span> How does this infrastructure create broader economic and organizational value?</span>
+                    <span class="faq-toggle-icon">+</span>
+                </button>
+                <div class="faq-answer">
+                    Private equity backs thousands of middle-market businesses that drive global employment, manufacturing, healthcare, and logistics. By replacing opaque, manual financial reporting with transparent, real-time data infrastructure, operating teams can diagnose operational inefficiencies early, allocate capital responsibly, protect margins against inflation, and build enduring, resilient companies that create sustainable long-term economic value.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <section class="footer">
+        <div class="container">
+            <h2>Built to production standards. Open for review.</h2>
+            <p>Every line of infrastructure code, every architecture decision, every CI/CD workflow.</p>
+            <div class="footer-ctas">
+                <a href="https://github.com/maxx1/pe-data-landing-zone" target="_blank" class="btn-dark">Explore on
+                    GitHub →</a>
+                <a href="https://github.com/maxx1/pe-data-landing-zone/tree/main/terraform" target="_blank"
+                    class="btn-outline">View Terraform →</a>
+            </div>
+            <div class="footer-meta">Built by <strong>Jeremi D Wright</strong></div>
+            <div class="footer-tech">Terraform · AWS · GitHub Actions · Snowflake Ready</div>
+            <div class="hypothetical-notice">
+                <strong>Platform Architecture & Case Study Showcase:</strong> Apex Vault is an independent reference
+                architecture engineered by Jeremi D Wright. All portfolio company entities, client scenarios, financial
+                metrics, and operational datasets are purely hypothetical models designed to demonstrate real-world
+                cloud infrastructure, data engineering, and GitOps automation.
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // X-RAY TOGGLE
+        function toggleXray(btn) {
+            const panel = btn.closest('.kpi-card, .portfolio-card, .scorecard, .flow-wrap').querySelector('.xray-panel');
+            const isActive = btn.classList.contains('active');
+            document.querySelectorAll('.xray-btn.active').forEach(b => { b.classList.remove('active'); b.closest('.kpi-card, .portfolio-card, .scorecard, .flow-wrap').querySelector('.xray-panel').classList.remove('active'); });
+            if (!isActive) { btn.classList.add('active'); panel.classList.add('active'); }
+        }
+
+        // FAQ TOGGLE
+        function toggleFaq(btn) {
+            const card = btn.closest('.faq-card');
+            const isActive = card.classList.contains('active');
+            document.querySelectorAll('.faq-card.active').forEach(c => c.classList.remove('active'));
+            if (!isActive) {
+                card.classList.add('active');
+            }
+        }
+
+        // VCP BAR ANIMATION
+        const vcpObs = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.querySelectorAll('.vcp-bar-fill').forEach(bar => {
+                        const w = bar.getAttribute('data-width');
+                        if (w) setTimeout(() => { bar.style.width = w; }, 300);
+                    });
+                    vcpObs.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.3 });
+        document.querySelectorAll('.scorecard').forEach(el => vcpObs.observe(el));
+
+        // PORTFOLIO DATA STATE
+        const portfolioData = {
+            'Prestige Industrial': { revenue: 34.2, cogs: 21.1, opex: 8.4 },
+            'Clearwater Health': { revenue: 12.0, cogs: 7.2, opex: 3.1 },
+            'Summit Ridge': { revenue: 18.5, cogs: 10.8, opex: 4.2 },
+            'Meridian Capital': { revenue: 7.7, cogs: 4.5, opex: 1.8 }
+        };
+        let currentTab = 'postgresql';
+        let queryCount = 0;
+
+        // SQL TEMPLATES MAPPED TO DISTINCT PORTFOLIO BUSINESSES
+        function getSQL(tab) {
+            if (tab === 'postgresql') {
+                return `<pre><span class="comment">-- PostgreSQL: Ingest Prestige Industrial manufacturing ERP data</span>
+<span class="keyword">INSERT INTO</span> <span class="table-name">prestige_industrial.financial_ledger</span>
+  (company, quarter, revenue, cogs, opex)
+<span class="keyword">VALUES</span> (
+  <span class="string">'Prestige Industrial Services'</span>,
+  <span class="string">'Q3 2026'</span>,
+  <input class="sql-input" id="input-revenue" type="number" value="${(portfolioData['Prestige Industrial'].revenue * 1e6).toFixed(0)}" step="1000000">,
+  <input class="sql-input" id="input-cogs" type="number" value="${(portfolioData['Prestige Industrial'].cogs * 1e6).toFixed(0)}" step="1000000">,
+  <input class="sql-input" id="input-opex" type="number" value="${(portfolioData['Prestige Industrial'].opex * 1e6).toFixed(0)}" step="1000000">
+);</pre>`;
+            } else if (tab === 'snowflake') {
+                return `<pre><span class="comment">-- Snowflake: Stage Clearwater Health healthcare staffing financials</span>
+<span class="keyword">INSERT INTO</span> <span class="table-name">APEX_VAULT.CLEARWATER_HEALTH.STAGING_RECORDS</span>
+  (COMPANY, QUARTER, REVENUE, COGS, OPEX)
+<span class="keyword">VALUES</span> (
+  <span class="string">'Clearwater Health Partners'</span>,
+  <span class="string">'Q3 2026'</span>,
+  <input class="sql-input" id="input-revenue" type="number" value="${(portfolioData['Clearwater Health'].revenue * 1e6).toFixed(0)}" step="1000000">,
+  <input class="sql-input" id="input-cogs" type="number" value="${(portfolioData['Clearwater Health'].cogs * 1e6).toFixed(0)}" step="1000000">,
+  <input class="sql-input" id="input-opex" type="number" value="${(portfolioData['Clearwater Health'].opex * 1e6).toFixed(0)}" step="1000000">
+);</pre>`;
+            } else {
+                return `<pre><span class="comment">// DynamoDB: Real-time supply chain operational metrics for Summit Ridge</span>
+{
+  <span class="json-key">"TableName"</span>: <span class="string">"project-apex-operational-records"</span>,
+  <span class="json-key">"Item"</span>: {
+    <span class="json-key">"company_id"</span>: <span class="string">"COMPANY#summit-ridge-logistics"</span>,
+    <span class="json-key">"timestamp"</span>: <span class="string">"2026-09-07T12:00:00Z"</span>,
+    <span class="json-key">"revenue"</span>: <input class="sql-input" id="input-revenue" type="number" value="${(portfolioData['Summit Ridge'].revenue * 1e6).toFixed(0)}" step="1000000">,
+    <span class="json-key">"cogs"</span>: <input class="sql-input" id="input-cogs" type="number" value="${(portfolioData['Summit Ridge'].cogs * 1e6).toFixed(0)}" step="1000000">,
+    <span class="json-key">"opex"</span>: <input class="sql-input" id="input-opex" type="number" value="${(portfolioData['Summit Ridge'].opex * 1e6).toFixed(0)}" step="1000000">
+  }
+}</pre>`;
+            }
+        }
+
+        function switchTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.sql-tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById('sql-editor').innerHTML = getSQL(tab);
+            const targetName = tab === 'postgresql' ? 'Prestige Industrial' : tab === 'snowflake' ? 'Clearwater Health' : 'Summit Ridge';
+            document.getElementById('sql-output').textContent = `Editing ${targetName}. Change values, then execute.`;
+            document.getElementById('sql-output').className = 'sql-output';
+        }
+
+        // CHART
+        const maxVal = 50;
+        function formatM(v) { return '$' + v.toFixed(1) + 'M'; }
+        function renderChart() {
+            const body = document.getElementById('live-chart-body');
+            let totalRev = 0;
+            let html = '';
+            Object.entries(portfolioData).forEach(([name, d]) => {
+                totalRev += d.revenue;
+                html += `<div class="chart-company"><div class="chart-company-name">${name}</div><div class="chart-bars">
+                    <div class="chart-bar-row"><span class="chart-bar-label">Revenue</span><div class="chart-bar-track"><div class="chart-bar-fill revenue" style="width:${d.revenue / maxVal * 100}%"></div></div><span class="chart-bar-value">${formatM(d.revenue)}</span></div>
+                    <div class="chart-bar-row"><span class="chart-bar-label">COGS</span><div class="chart-bar-track"><div class="chart-bar-fill cogs" style="width:${d.cogs / maxVal * 100}%"></div></div><span class="chart-bar-value">${formatM(d.cogs)}</span></div>
+                    <div class="chart-bar-row"><span class="chart-bar-label">OpEx</span><div class="chart-bar-track"><div class="chart-bar-fill opex" style="width:${d.opex / maxVal * 100}%"></div></div><span class="chart-bar-value">${formatM(d.opex)}</span></div>
+                </div></div>`;
+            });
+            html += `<div class="chart-total-row"><span class="chart-total-label">Total Portfolio Revenue</span><span class="chart-total-value">${formatM(totalRev)}</span></div>`;
+            body.innerHTML = html;
+        }
+
+        // EXECUTE QUERY & UPDATE MAPPED COMPANY
+        function executeQuery() {
+            const btn = document.getElementById('sql-execute-btn');
+            const output = document.getElementById('sql-output');
+            const overlay = document.getElementById('processing-overlay');
+            const ri = document.getElementById('input-revenue');
+            const ci = document.getElementById('input-cogs');
+            const oi = document.getElementById('input-opex');
+            if (!ri || !ci || !oi) return;
+            const rev = parseFloat(ri.value) / 1e6;
+            const cogs = parseFloat(ci.value) / 1e6;
+            const opex = parseFloat(oi.value) / 1e6;
+
+            const targetCompany = currentTab === 'postgresql' ? 'Prestige Industrial'
+                                : currentTab === 'snowflake' ? 'Clearwater Health'
+                                : 'Summit Ridge';
+
+            btn.disabled = true;
+            output.textContent = `Processing ${targetCompany} via Lambda...`;
+            output.className = 'sql-output processing';
+            overlay.classList.add('active');
+
+            setTimeout(() => {
+                portfolioData[targetCompany] = { revenue: rev, cogs: cogs, opex: opex };
+                queryCount++;
+                overlay.classList.remove('active');
+                renderChart();
+
+                // Recalculate Portfolio KPIs
+                let totalRev = 0, totalCogs = 0, totalOpex = 0;
+                Object.values(portfolioData).forEach(d => { totalRev += d.revenue; totalCogs += d.cogs; totalOpex += d.opex; });
+                const margin = ((totalRev - totalCogs) / totalRev * 100);
+                document.getElementById('kpi-revenue').innerHTML = '$' + totalRev.toFixed(1) + '<span class="unit">M</span>';
+                document.getElementById('kpi-margin').innerHTML = margin.toFixed(1) + '<span class="unit">%</span>';
+
+                // Update Specific Portfolio Company Card
+                if (targetCompany === 'Prestige Industrial') {
+                    const pm = ((rev - cogs) / rev * 100).toFixed(1);
+                    document.getElementById('prestige-rev').innerHTML = '$' + rev.toFixed(1) + '<span class="sm">M</span>';
+                    document.getElementById('prestige-margin').innerHTML = pm + '<span class="sm">%</span>';
+                } else if (targetCompany === 'Clearwater Health') {
+                    const cm = ((rev - cogs) / rev * 100).toFixed(1);
+                    const elRev = document.getElementById('clearwater-rev');
+                    const elMargin = document.getElementById('clearwater-margin');
+                    if (elRev) elRev.innerHTML = '$' + rev.toFixed(1) + '<span class="sm">M</span>';
+                    if (elMargin) elMargin.innerHTML = cm + '<span class="sm">%</span>';
+                } else if (targetCompany === 'Summit Ridge') {
+                    const elRev = document.getElementById('summit-rev');
+                    if (elRev) elRev.innerHTML = '$' + rev.toFixed(1) + '<span class="sm">M</span>';
+                }
+
+                output.textContent = `1 row inserted into ${targetCompany} (${currentTab.toUpperCase()}). Processing: 206ms. Query #${queryCount}`;
+                output.className = 'sql-output success';
+                btn.disabled = false;
+            }, 800);
+        }
+
+        // INIT
+        document.getElementById('sql-editor').innerHTML = getSQL('postgresql');
+        renderChart();
+    </script>
+
+</body>
+
+</html>
