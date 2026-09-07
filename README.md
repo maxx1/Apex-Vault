@@ -1,16 +1,16 @@
-# 🏛️ Apex Vault — Enterprise Portfolio Data Platform
+# 🏛️ Apex Vault: Enterprise Portfolio Data Platform
 
-**A production-grade, multi-tenant AWS data platform for enterprise portfolio management — built with Terraform, deployed via GitHub Actions CI/CD, and designed for organizations managing multiple business units at scale.**
+**A production-grade, multi-tenant AWS data platform for enterprise portfolio management, built with Terraform, deployed via GitHub Actions CI/CD, and designed for organizations managing multiple business units at scale.**
 
-> **The Big Idea:** Apex Vault is the cloud data foundation that replaces fragmented spreadsheets, siloed databases, and manual reporting with a single, automated data pipeline. Upload financial data from any source — it's validated, encrypted, cataloged, and queryable in seconds. Every portfolio company gets its own isolated data environment, provisioned with two lines of Terraform.
+> **The Big Idea:** Apex Vault is the cloud data foundation that replaces fragmented spreadsheets, siloed databases, and manual reporting with a single, automated data pipeline. Upload financial data from any source and it is validated, encrypted, cataloged, and queryable in seconds. Every portfolio company gets its own isolated data environment, provisioned with two lines of Terraform.
 
-🔗 **[Live Dashboard](https://maxx1.github.io/pe-data-landing-zone/)** · **[Architecture Decision Records](docs/adr/)**
+🔗 **[Live Dashboard](https://maxx1.github.io/Apex-Vault/)** · **[Architecture Decision Records](docs/adr/)**
 
 ---
 
 ## 📋 The Scenario
 
-> A Private Equity firm just acquired a mid-market manufacturing company. The company's financial data is scattered across legacy systems — some in on-premises ERPs, some in spreadsheets, some in Salesforce. The PE firm needs this data centralized in the cloud so their analysts can build dashboards, run forecasts, and track KPIs.
+> A Private Equity firm just acquired a mid-market manufacturing company. The company's financial data is scattered across legacy systems: some in on-premise ERPs, some in spreadsheets, and some in Salesforce. The PE firm needs this data centralized in the cloud so their analysts can build dashboards, run forecasts, and track KPIs.
 >
 > **Apex Vault builds the institutional cloud foundation that makes that possible.**
 
@@ -100,7 +100,7 @@ How every piece of infrastructure is defined, versioned, and deployed as code:
 |---|---|---|
 | **Remote State Backend** | [`main.tf`](terraform/main.tf) | Terraform state stored in S3 with DynamoDB locking. Prevents concurrent modifications in team environments. Encrypted at rest |
 | **Reusable S3 Module** | [`modules/s3-bucket/`](terraform/modules/s3-bucket/) | One module, called 10 times. Every bucket gets: AES-256 encryption, versioning, public access blocked, SSL-only policy, 3-tier lifecycle rules. Change the module once → all 10 buckets inherit it |
-| **Multi-Tenant Onboarding** | [`s3.tf`](terraform/s3.tf) | Adding a new portfolio company = 2 module calls (~15 lines of HCL). Each company gets isolated raw + processed buckets with identical security baselines |
+| **Multi-Tenant Onboarding** | [`s3.tf`](terraform/s3.tf) | Adding a new portfolio company = 2 module calls (~15 lines of HCL / HashiCorp Configuration Language). Each company gets isolated raw + processed buckets with identical security baselines |
 | **Variable-Driven Config** | [`variables.tf`](terraform/variables.tf) | All values parameterized: project name, environment (dev/staging/prod with validation), region, client name, VPC CIDR, alert email. Zero hardcoded strings |
 | **Data Catalog** | [`athena.tf`](terraform/athena.tf) | Glue catalog tables auto-map S3 data to SQL-queryable schemas. Financial records (revenue, expenses, EBITDA) + operational records (shipments, cost per unit, on-time rate) |
 | **Monitoring as Code** | [`monitoring.tf`](terraform/monitoring.tf) | CloudWatch dashboard with 6 metric widgets, error/throttle alarms, and SNS alerting — all defined declaratively. Pipeline health visible without AWS console access |
