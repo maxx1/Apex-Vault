@@ -18,6 +18,11 @@
 
 ## 🏛️ Architecture
 
+[![Apex Vault Architecture](docs/images/architecture.png)](docs/images/architecture.png)
+
+<details>
+<summary>📐 <b>View Mermaid Diagram Source</b></summary>
+
 ```mermaid
 flowchart TB
     subgraph "Client Systems"
@@ -71,6 +76,7 @@ flowchart TB
     GH --> TFSEC
     GH --> COST
 ```
+</details>
 
 ---
 
